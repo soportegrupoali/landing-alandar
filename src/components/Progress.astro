@@ -1,0 +1,119 @@
+---
+import { Image, getImage } from 'astro:assets';
+import motifs from '../assets/img/iconos-circulares-blancos.png';
+import progressPoster from '../assets/img/progress.webp';
+
+const posterOptimized = await getImage({ src: progressPoster, width: 1280, format: 'webp' });
+---
+
+<section class="section progress" id="avance" aria-labelledby="avance-heading">
+  <div class="wrap grid-2">
+    <div data-reveal>
+      <Image src={motifs} alt="" role="presentation" class="motifs" widths={[110]} sizes="110px" loading="lazy" />
+      <p class="eyebrow">Avance de obra</p>
+      <h2 class="title" id="avance-heading">Un proyecto que avanza contigo.</h2>
+      <p class="lede">
+        Da seguimiento al progreso del desarrollo con material audiovisual actualizado del proyecto.
+      </p>
+    </div>
+    <div class="video" data-reveal>
+      <button
+        type="button"
+        class="video-trigger"
+        id="videoTrigger"
+        data-video-src="/media/alandar-04.mp4"
+        aria-label="Reproducir video de avance de obra de Alandar"
+      >
+        <img src={posterOptimized.src} alt="Fotografía aérea del avance de obra de Alandar" loading="lazy" />
+        <span class="play-badge" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7-11-7Z" /></svg>
+        </span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .progress {
+    background: var(--color-olive);
+    color: #fff;
+  }
+  .progress p {
+    color: #e9eee1;
+  }
+  .motifs {
+    width: 110px;
+    height: auto;
+    margin-bottom: 20px;
+  }
+  .video {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-lift);
+    background: #000;
+  }
+  .video-trigger {
+    position: relative;
+    display: block;
+    width: 100%;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    background: none;
+  }
+  .video-trigger img {
+    width: 100%;
+    display: block;
+  }
+  .play-badge {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+  .play-badge svg {
+    width: 74px;
+    height: 74px;
+    padding: 22px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--color-red);
+    box-shadow: var(--shadow-lift);
+    transition: transform 0.2s ease;
+  }
+  .video-trigger:hover .play-badge svg,
+  .video-trigger:focus-visible .play-badge svg {
+    transform: scale(1.08);
+  }
+  .video-trigger:focus-visible {
+    outline: 3px solid var(--color-peach);
+    outline-offset: 4px;
+  }
+
+  @media (max-width: 900px) {
+    .motifs {
+      width: 90px;
+    }
+  }
+</style>
+
+<script>
+  const trigger = document.getElementById('videoTrigger');
+  trigger?.addEventListener(
+    'click',
+    () => {
+      const src = trigger.dataset.videoSrc;
+      if (!src) return;
+      const video = document.createElement('video');
+      video.src = src;
+      video.controls = true;
+      video.autoplay = true;
+      video.setAttribute('playsinline', '');
+      video.style.width = '100%';
+      video.style.display = 'block';
+      trigger.replaceWith(video);
+      video.play().catch(() => {});
+    },
+    { once: true }
+  );
+</script>

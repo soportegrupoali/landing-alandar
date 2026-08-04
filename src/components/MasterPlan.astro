@@ -1,0 +1,193 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import masterMap from '../assets/img/master-transparent.png';
+import { masterPlanPins } from '../data/content';
+
+const iconModules = import.meta.glob<{ default: ImageMetadata }>('../assets/img/icon-*-white.png', { eager: true });
+const iconFor = (id: string) => iconModules[`../assets/img/icon-${id}-white.png`]?.default;
+---
+
+<section class="section master" id="master-plan" aria-labelledby="master-heading">
+  <div class="wrap">
+    <p class="eyebrow">Master plan</p>
+    <h2 class="title" id="master-heading" data-reveal>Orden, naturaleza y comunidad en un mismo recorrido.</h2>
+    <p class="lede" data-reveal>
+      El diseño integra áreas verdes, parques, vialidades y amenidades para conectar cada etapa con
+      espacios de convivencia y bienestar. Explora los puntos del mapa para conocer cada espacio.
+    </p>
+
+    <div class="master-map" data-reveal>
+      <Image
+        src={masterMap}
+        alt="Plano maestro de Alandar con la ubicación de parques, casa club y amenidades por etapa"
+        widths={[640, 960, 1280]}
+        sizes="92vw"
+        loading="lazy"
+      />
+      {masterPlanPins.map((pin) => {
+        const icon = iconFor(pin.icon);
+        return (
+          <button
+            class="pin"
+            style={`left:${pin.x}%; top:${pin.y}%`}
+            data-pin
+            aria-expanded="false"
+            aria-describedby={`tip-${pin.id}`}
+          >
+            {icon && <Image src={icon} alt="" role="presentation" width={30} height={30} loading="lazy" />}
+            <span class="visually-hidden">{pin.title}</span>
+            <span class="tooltip" id={`tip-${pin.id}`} role="tooltip">
+              <strong>{pin.title}</strong>
+              <span>{pin.desc}</span>
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<style>
+  .master-map {
+    position: relative;
+    margin-top: 32px;
+  }
+  .master-map :global(img) {
+    width: 100%;
+    display: block;
+  }
+  .pin {
+    position: absolute;
+    width: 46px;
+    height: 46px;
+    border: 0;
+    padding: 0;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    animation: softFloat 2.8s ease-in-out infinite;
+    transform: translate(-50%, -50%);
+  }
+  .pin::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: 50%;
+    background: rgba(189, 85, 78, 0.9);
+    z-index: -1;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+  }
+  .pin :global(img) {
+    width: 28px;
+    height: 28px;
+  }
+  .pin:hover,
+  .pin:focus-visible {
+    transform: translate(-50%, -50%) scale(1.08);
+    animation-play-state: paused;
+  }
+  .pin:focus-visible {
+    outline: 3px solid var(--color-peach);
+    outline-offset: 3px;
+  }
+  @keyframes softFloat {
+    0%,
+    100% {
+      transform: translate(-50%, -50%) translateY(0);
+    }
+    50% {
+      transform: translate(-50%, -50%) translateY(-4px);
+    }
+  }
+
+  .tooltip {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 12px);
+    transform: translateX(-50%);
+    width: min(250px, 60vw);
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow-lift);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 3;
+    text-align: left;
+  }
+  .tooltip strong {
+    display: block;
+    font-family: var(--font-display);
+    color: var(--color-red);
+    font-size: 1.05rem;
+    margin-bottom: 4px;
+  }
+  .tooltip span {
+    display: block;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--color-ink-soft);
+  }
+  .pin.is-active .tooltip,
+  .pin:hover .tooltip,
+  .pin:focus-visible .tooltip {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @media (max-width: 900px) {
+    .pin {
+      width: 38px;
+      height: 38px;
+    }
+    .pin :global(img) {
+      width: 22px;
+      height: 22px;
+    }
+    .tooltip {
+      width: min(220px, 68vw);
+    }
+  }
+</style>
+
+<script>
+  const pins = document.querySelectorAll<HTMLButtonElement>('[data-pin]');
+  const closeAll = () => pins.forEach((p) => { p.classList.remove('is-active'); p.setAttribute('aria-expanded', 'false'); });
+
+  pins.forEach((pin) => {
+    pin.addEventListener('click', () => {
+      const willOpen = !pin.classList.contains('is-active');
+      closeAll();
+      if (willOpen) {
+        pin.classList.add('is-active');
+        pin.setAttribute('aria-expanded', 'true');
+
+        // Evita que el tooltip se corte en los bordes del viewport.
+        const tooltip = pin.querySelector<HTMLElement>('.tooltip');
+        if (tooltip) {
+          tooltip.style.left = '50%';
+          tooltip.style.right = 'auto';
+          const rect = tooltip.getBoundingClientRect();
+          if (rect.left < 8) {
+            tooltip.style.left = '0';
+            tooltip.style.transform = 'translateX(0)';
+          } else if (rect.right > window.innerWidth - 8) {
+            tooltip.style.left = 'auto';
+            tooltip.style.right = '0';
+            tooltip.style.transform = 'translateX(0)';
+          } else {
+            tooltip.style.transform = 'translateX(-50%)';
+          }
+        }
+      }
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!(e.target instanceof Element) || !e.target.closest('[data-pin]')) closeAll();
+  });
+</script>

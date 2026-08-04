@@ -1,0 +1,186 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { amenities } from '../data/content';
+
+const imgModules = import.meta.glob<{ default: ImageMetadata }>('../assets/img/amenidad-*.webp', { eager: true });
+const imgFor = (name: string) => imgModules[`../assets/img/${name}.webp`]?.default;
+---
+
+<section class="section" id="amenidades" aria-labelledby="amenidades-heading">
+  <div class="wrap">
+    <p class="eyebrow">Amenidades</p>
+    <h2 class="title" id="amenidades-heading" data-reveal>Espacios pensados<br />para cada forma de vivir.</h2>
+    <p class="lede" data-reveal>Una casa club y parques para activar, descansar, convivir y disfrutar todos los días.</p>
+
+    <div class="slider" data-reveal>
+      <ul class="track" id="amenTrack">
+        {amenities.map((a, i) => {
+          const img = imgFor(a.img);
+          return (
+            <li class="slide">
+              {img && (
+                <Image
+                  src={img}
+                  alt={`${a.title}: ${a.desc}`}
+                  widths={[420, 640]}
+                  sizes="(min-width: 900px) 32vw, 82vw"
+                  loading={i < 2 ? 'eager' : 'lazy'}
+                />
+              )}
+              <div class="slide-copy">
+                <h3>{a.title}</h3>
+                <p>{a.desc}</p>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+
+      <div class="slider-controls">
+        <button class="slider-btn" id="amenPrev" aria-label="Amenidad anterior">‹</button>
+        <div class="dots" id="amenDots" role="tablist" aria-label="Selecciona una amenidad">
+          {amenities.map((a, i) => (
+            <button
+              class="dot"
+              class:list={[{ active: i === 0 }]}
+              role="tab"
+              aria-selected={i === 0}
+              aria-controls={`slide-${i}`}
+              data-i={i}
+            >
+              <span class="visually-hidden">{a.title}</span>
+            </button>
+          ))}
+        </div>
+        <button class="slider-btn" id="amenNext" aria-label="Siguiente amenidad">›</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .slider {
+    margin-top: 28px;
+  }
+  .track {
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 4px 4px 12px;
+    margin: 0;
+    list-style: none;
+    scrollbar-width: none;
+  }
+  .track::-webkit-scrollbar {
+    display: none;
+  }
+  .slide {
+    min-width: min(360px, 82vw);
+    scroll-snap-align: start;
+    background: #fff;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+  }
+  .slide :global(img) {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    display: block;
+  }
+  .slide-copy {
+    padding: 18px 20px 22px;
+  }
+  .slide-copy h3 {
+    font-size: 1.3rem;
+    margin-bottom: 6px;
+  }
+  .slider-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 18px;
+  }
+  .slider-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(29, 29, 22, 0.15);
+    background: #fff;
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--color-red);
+    transition: background-color 0.2s ease;
+  }
+  .slider-btn:hover {
+    background: var(--color-cream);
+  }
+  .dots {
+    display: flex;
+    gap: 8px;
+  }
+  .dot {
+    width: 10px;
+    height: 10px;
+    border: 0;
+    border-radius: 50%;
+    background: #8ea05a;
+    opacity: 0.45;
+    cursor: pointer;
+    padding: 0;
+  }
+  .dot.active {
+    opacity: 1;
+    background: var(--color-red);
+  }
+
+  @media (max-width: 900px) {
+    .slide :global(img) {
+      height: 220px;
+    }
+  }
+</style>
+
+<script>
+  const track = document.getElementById('amenTrack');
+  const dotsWrap = document.getElementById('amenDots');
+  const prevBtn = document.getElementById('amenPrev');
+  const nextBtn = document.getElementById('amenNext');
+  if (track && dotsWrap) {
+    const slides = Array.from(track.children) as HTMLElement[];
+    const dots = Array.from(dotsWrap.querySelectorAll<HTMLButtonElement>('.dot'));
+
+    const goTo = (i: number) => {
+      const idx = Math.max(0, Math.min(i, slides.length - 1));
+      slides[idx].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+    };
+
+    dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
+    prevBtn?.addEventListener('click', () => goTo(activeIndex() - 1));
+    nextBtn?.addEventListener('click', () => goTo(activeIndex() + 1));
+
+    function activeIndex() {
+      return dots.findIndex((d) => d.classList.contains('active'));
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const i = slides.indexOf(entry.target as HTMLElement);
+            dots.forEach((d, k) => {
+              d.classList.toggle('active', k === i);
+              d.setAttribute('aria-selected', String(k === i));
+            });
+          }
+        }
+      },
+      { root: track, threshold: 0.6 }
+    );
+    slides.forEach((s) => io.observe(s));
+  }
+</script>

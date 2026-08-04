@@ -1,0 +1,166 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/img/logo-alandar-blanco.png';
+import { nav } from '../data/content';
+---
+
+<header class="nav" id="site-header">
+  <div class="wrap nav-inner">
+    <a href="#inicio" class="logo-link" aria-label="Alandar Paseo Residencial, ir al inicio">
+      <Image src={logo} alt="Alandar Paseo Residencial" class="logo" widths={[140, 200]} sizes="180px" loading="eager" />
+    </a>
+
+    <button class="hamb" id="hamb" aria-expanded="false" aria-controls="menu">
+      <span class="visually-hidden">Abrir menú</span>
+      <svg width="20" height="14" viewBox="0 0 20 14" fill="none" aria-hidden="true">
+        <path d="M0 1h20M0 7h20M0 13h20" stroke="currentColor" stroke-width="2" />
+      </svg>
+    </button>
+
+    <nav class="menu" id="menu" aria-label="Navegación principal">
+      {nav.map((item) => (
+        <a href={item.href} data-nav-link>{item.label}</a>
+      ))}
+      <a href="#contacto" class="btn btn-red menu-cta">Contactar</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: fixed;
+    inset-inline: 0;
+    top: 0;
+    z-index: 50;
+    padding-block: 14px;
+    background: linear-gradient(rgba(18, 24, 14, 0.72), rgba(18, 24, 14, 0.08));
+    backdrop-filter: blur(8px);
+    transition: background-color 0.3s ease, padding-block 0.3s ease;
+  }
+  .nav.is-scrolled {
+    background: rgba(18, 24, 14, 0.92);
+    padding-block: 10px;
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .logo-link {
+    display: block;
+    flex-shrink: 0;
+  }
+  .logo {
+    height: 34px;
+    width: auto;
+    max-width: 180px;
+    object-fit: contain;
+  }
+  .menu {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    font-size: 0.82rem;
+    color: #fff;
+  }
+  .menu a {
+    opacity: 0.88;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
+  }
+  .menu a:hover,
+  .menu a:focus-visible,
+  .menu a[aria-current='true'] {
+    opacity: 1;
+  }
+  .menu-cta {
+    padding: 10px 18px;
+    font-size: 0.8rem;
+  }
+  .hamb {
+    display: none;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+    border-radius: 10px;
+    padding: 9px 12px;
+    cursor: pointer;
+  }
+
+  @media (max-width: 900px) {
+    .menu {
+      display: none;
+      position: absolute;
+      right: 4vw;
+      top: 64px;
+      background: #26381d;
+      border-radius: 18px;
+      padding: 18px;
+      flex-direction: column;
+      align-items: flex-start;
+      box-shadow: var(--shadow-lift);
+    }
+    .menu.open {
+      display: flex;
+    }
+    .hamb {
+      display: block;
+    }
+    .menu-cta {
+      margin-top: 6px;
+    }
+  }
+</style>
+
+<script>
+  const header = document.getElementById('site-header');
+  const hamb = document.getElementById('hamb');
+  const menu = document.getElementById('menu');
+
+  const onScroll = () => {
+    header?.classList.toggle('is-scrolled', window.scrollY > 12);
+  };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  hamb?.addEventListener('click', () => {
+    const isOpen = menu?.classList.toggle('open');
+    hamb.setAttribute('aria-expanded', String(Boolean(isOpen)));
+  });
+
+  menu?.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      menu.classList.remove('open');
+      hamb?.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // Scrollspy: resalta el link de la sección visible
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]'));
+  const sections = links
+    .map((link) => document.querySelector(link.getAttribute('href') || ''))
+    .filter((el): el is Element => Boolean(el));
+
+  if (sections.length) {
+    const spy = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const id = `#${entry.target.id}`;
+            links.forEach((link) => {
+              if (link.getAttribute('href') === id) {
+                link.setAttribute('aria-current', 'true');
+              } else {
+                link.removeAttribute('aria-current');
+              }
+            });
+          }
+        }
+      },
+      { rootMargin: '-45% 0px -50% 0px' }
+    );
+    sections.forEach((section) => spy.observe(section));
+  }
+</script>

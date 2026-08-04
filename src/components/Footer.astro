@@ -1,0 +1,113 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/img/logo-alandar-blanco.png';
+import { site, nav } from '../data/content';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="wrap footer-grid">
+    <div>
+      <Image src={logo} alt="Alandar Paseo Residencial" widths={[160]} sizes="160px" class="footer-logo" />
+      <p class="footer-desc">{site.description}</p>
+    </div>
+
+    <nav aria-label="Enlaces del sitio">
+      <h2 class="footer-heading">Explorar</h2>
+      <ul class="footer-list">
+        {nav.map((item) => (
+          <li><a href={item.href}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div>
+      <h2 class="footer-heading">Contacto</h2>
+      <ul class="footer-list">
+        <li><a href={`tel:${site.phoneDisplay.replace(/\s/g, '')}`}>{site.phoneDisplay}</a></li>
+        <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+        <li>{site.address.locality}, {site.address.region}, México</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wrap footer-bottom">
+    <p>&copy; {year} {site.name}. Todos los derechos reservados.</p>
+    <p class="footer-legal">
+      Renders, avances de obra y planes de financiamiento sujetos a disponibilidad y cambio sin previo aviso.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--color-dark);
+    color: #d6d0c6;
+    padding-block: 64px 28px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 40px;
+  }
+  .footer-logo {
+    height: 30px;
+    width: auto;
+    margin-bottom: 16px;
+  }
+  .footer-desc {
+    color: #a8a297;
+    max-width: 40ch;
+  }
+  .footer-heading {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+  .footer-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 10px;
+    font-size: 0.9rem;
+  }
+  .footer-list a {
+    text-decoration: none;
+    color: #d6d0c6;
+    transition: color 0.2s ease;
+  }
+  .footer-list a:hover {
+    color: #fff;
+  }
+  .footer-bottom {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 0.78rem;
+    color: #8a8479;
+  }
+  .footer-bottom p {
+    color: inherit;
+    margin: 0;
+  }
+  .footer-legal {
+    max-width: 48ch;
+  }
+
+  @media (max-width: 900px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+</style>

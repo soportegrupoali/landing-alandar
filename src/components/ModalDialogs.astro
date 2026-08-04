@@ -1,0 +1,122 @@
+---
+import { site } from '../data/content';
+---
+
+<dialog id="brochure" class="modal">
+  <button class="x" data-close aria-label="Cerrar">×</button>
+  <h3 class="title modal-title">Descarga el brochure</h3>
+  <p>Déjanos tus datos para habilitar la descarga.</p>
+  <form id="brochureForm" data-whatsapp={site.phoneWhatsapp} data-pdf="/media/brochure-alandar-2026.pdf">
+    <label for="b-name" class="visually-hidden">Nombre</label>
+    <input id="b-name" name="name" required placeholder="Nombre" autocomplete="name" />
+    <label for="b-phone" class="visually-hidden">Teléfono</label>
+    <input id="b-phone" name="phone" required placeholder="Teléfono" autocomplete="tel" inputmode="tel" />
+    <label for="b-email" class="visually-hidden">Correo</label>
+    <input id="b-email" name="email" required type="email" placeholder="Correo" autocomplete="email" />
+    <button class="btn btn-red" style="width:100%" type="submit">Descargar brochure</button>
+  </form>
+</dialog>
+
+<dialog id="info" class="modal">
+  <button class="x" data-close aria-label="Cerrar">×</button>
+  <h3 class="title modal-title">Solicita información</h3>
+  <form id="infoForm" data-whatsapp={site.phoneWhatsapp}>
+    <label for="i-name" class="visually-hidden">Nombre y apellido</label>
+    <input id="i-name" name="name" required placeholder="Nombre y apellido" autocomplete="name" />
+    <label for="i-phone" class="visually-hidden">Teléfono</label>
+    <input id="i-phone" name="phone" required placeholder="Teléfono" autocomplete="tel" inputmode="tel" />
+    <label for="i-email" class="visually-hidden">Correo</label>
+    <input id="i-email" name="email" required type="email" placeholder="Correo" autocomplete="email" />
+    <label for="i-message" class="visually-hidden">Mensaje</label>
+    <textarea id="i-message" name="message" placeholder="Mensaje"></textarea>
+    <button class="btn btn-red" style="width:100%" type="submit">Enviar mensaje</button>
+  </form>
+</dialog>
+
+<style>
+  .modal {
+    border: 0;
+    border-radius: 24px;
+    padding: 28px;
+    width: min(520px, 94vw);
+    box-shadow: var(--shadow-lift);
+    margin: auto;
+  }
+  .modal::backdrop {
+    background: rgba(0, 0, 0, 0.58);
+  }
+  .modal-title {
+    font-size: 2rem;
+    margin-bottom: 6px;
+  }
+  .modal input,
+  .modal textarea {
+    width: 100%;
+    padding: 14px 15px;
+    border: 1px solid #e4ddd5;
+    border-radius: 11px;
+    margin-bottom: 12px;
+    font: inherit;
+  }
+  .modal textarea {
+    min-height: 95px;
+    resize: vertical;
+  }
+  .x {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    border: 0;
+    background: #f4eee7;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    font-size: 1.1rem;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-modal-open]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.modalOpen;
+      const dialog = id ? document.getElementById(id) : null;
+      if (dialog instanceof HTMLDialogElement) dialog.showModal();
+    });
+  });
+
+  document.querySelectorAll<HTMLDialogElement>('dialog.modal').forEach((dialog) => {
+    dialog.querySelector('[data-close]')?.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+  });
+
+  const brochureForm = document.getElementById('brochureForm') as HTMLFormElement | null;
+  brochureForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const pdf = brochureForm.dataset.pdf;
+    if (pdf) window.open(pdf, '_blank', 'noopener,noreferrer');
+    (brochureForm.closest('dialog') as HTMLDialogElement | null)?.close();
+    brochureForm.reset();
+  });
+
+  const infoForm = document.getElementById('infoForm') as HTMLFormElement | null;
+  infoForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = new FormData(infoForm);
+    const phone = infoForm.dataset.whatsapp;
+    const lines = [
+      'Hola, quiero solicitar información de Alandar Paseo Residencial.',
+      `Nombre: ${data.get('name')}`,
+      `Teléfono: ${data.get('phone')}`,
+      `Correo: ${data.get('email')}`,
+      `Mensaje: ${data.get('message') || '(sin mensaje)'}`,
+    ];
+    if (phone) {
+      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener,noreferrer');
+    }
+    (infoForm.closest('dialog') as HTMLDialogElement | null)?.close();
+    infoForm.reset();
+  });
+</script>

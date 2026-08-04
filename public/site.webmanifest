@@ -1,0 +1,14 @@
+{
+  "name": "Alandar Paseo Residencial",
+  "short_name": "Alandar",
+  "description": "Privada residencial de 600 lotes en San Antonio Hool, Mérida.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fbf8f2",
+  "theme_color": "#bd554e",
+  "icons": [
+    { "src": "/favicon-32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

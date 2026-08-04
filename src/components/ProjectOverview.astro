@@ -1,0 +1,70 @@
+---
+import { Image } from 'astro:assets';
+import project from '../assets/img/project.webp';
+import { stats } from '../data/content';
+---
+
+<section class="section" id="proyecto" aria-labelledby="proyecto-heading">
+  <div class="wrap grid-2">
+    <div data-reveal>
+      <p class="eyebrow">Alandar | Proyecto</p>
+      <h2 class="title" id="proyecto-heading">Un desarrollo planeado para vivir hacia afuera.</h2>
+      <p class="lede">
+        Vivir hacia afuera significa que la vida no se queda únicamente dentro del lote: se extiende
+        hacia parques, andadores, casa club, áreas verdes y espacios comunes que invitan a caminar,
+        convivir, ejercitarte y disfrutar el entorno todos los días.
+      </p>
+      <dl class="stats">
+        {stats.map((s) => (
+          <div class="stat">
+            <dt>{s.label}</dt>
+            <dd>{s.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+    <div class="card-img" data-reveal>
+      <Image
+        src={project}
+        alt="Vista aérea del desarrollo Alandar mostrando lotes, parques y vialidades"
+        widths={[480, 720, 960]}
+        sizes="(min-width: 900px) 45vw, 92vw"
+        loading="lazy"
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 24px 0 0;
+  }
+  .stat {
+    background: #fff;
+    border-radius: var(--radius-md);
+    padding: 22px;
+    box-shadow: var(--shadow-soft);
+  }
+  .stat dt {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #8a837b;
+    margin-bottom: 9px;
+  }
+  .stat dd {
+    margin: 0;
+    font-family: var(--font-display);
+    color: var(--color-red);
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+  }
+
+  @media (max-width: 900px) {
+    .stats {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

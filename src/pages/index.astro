@@ -1,0 +1,31 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import ProjectOverview from '../components/ProjectOverview.astro';
+import MasterPlan from '../components/MasterPlan.astro';
+import Location from '../components/Location.astro';
+import Amenities from '../components/Amenities.astro';
+import AvailabilityCta from '../components/AvailabilityCta.astro';
+import Progress from '../components/Progress.astro';
+import Financing from '../components/Financing.astro';
+import Quote from '../components/Quote.astro';
+import Gallery from '../components/Gallery.astro';
+import Contact from '../components/Contact.astro';
+import ModalDialogs from '../components/ModalDialogs.astro';
+import { site } from '../data/content';
+---
+
+<Layout title={`${site.name} | ${site.tagline}`} description={site.description}>
+  <Hero />
+  <ProjectOverview />
+  <MasterPlan />
+  <Location />
+  <Amenities />
+  <AvailabilityCta />
+  <Progress />
+  <Financing />
+  <Quote />
+  <Gallery />
+  <Contact />
+  <ModalDialogs />
+</Layout>

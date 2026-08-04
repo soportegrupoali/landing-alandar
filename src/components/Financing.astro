@@ -1,0 +1,66 @@
+---
+import { financing } from '../data/content';
+---
+
+<section class="section finance" id="financiamiento" aria-labelledby="finance-heading">
+  <div class="wrap">
+    <p class="eyebrow">Plan de financiamiento</p>
+    <h2 class="title" id="finance-heading" data-reveal>Opciones pensadas para facilitar tu inversión.</h2>
+    <p class="lede" data-reveal>Planes sujetos a disponibilidad, vigencia y condiciones comerciales del proyecto.</p>
+
+    <div class="finance-cards" data-reveal>
+      {financing.map((f) => (
+        <div class="finance-card">
+          <span>{f.label}</span>
+          <strong>{f.value}</strong>
+          {f.note && <small>{f.note}</small>}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .finance {
+    background: #fff;
+  }
+  .finance-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 30px;
+  }
+  .finance-card {
+    background: var(--color-bg);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    border: 1px solid #eee;
+  }
+  .finance-card span {
+    display: block;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #81796f;
+    margin-bottom: 8px;
+  }
+  .finance-card strong {
+    display: block;
+    color: var(--color-red);
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3vw, 2.25rem);
+    font-weight: 400;
+  }
+  .finance-card small {
+    display: block;
+    color: var(--color-ink-soft);
+    line-height: 1.45;
+    margin-top: 6px;
+  }
+
+  @media (max-width: 900px) {
+    .finance-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,81 @@
+---
+import { Image } from 'astro:assets';
+import locationMap from '../assets/img/location-transparent.png';
+import { locationStats } from '../data/content';
+
+const mapsHref =
+  'https://www.google.com/maps/search/?api=1&query=Alandar%20Paseo%20Residencial%20San%20Antonio%20Hool%20M%C3%A9rida%20Yucat%C3%A1n';
+---
+
+<section class="section location" id="ubicacion" aria-labelledby="ubicacion-heading">
+  <div class="wrap grid-2 location-grid">
+    <div class="map-card" data-reveal>
+      <Image
+        src={locationMap}
+        alt="Mapa de ubicación de Alandar en San Antonio Hool, al norte de Mérida, Yucatán"
+        widths={[480, 720, 1024]}
+        sizes="(min-width: 900px) 55vw, 92vw"
+        loading="lazy"
+      />
+    </div>
+    <div data-reveal>
+      <p class="eyebrow">Ubicación cómoda y exclusiva</p>
+      <h2 class="title" id="ubicacion-heading">Conecta con lo mejor de Mérida.</h2>
+      <p class="lede">
+        San Antonio Hool combina tranquilidad y excelente conectividad. Se encuentra cerca del
+        Periférico de Mérida y permite conectar con plazas, universidades, servicios y la costa
+        yucateca.
+      </p>
+      <div class="cards">
+        {locationStats.map((s) => (
+          <div class="mini">
+            <strong>{s.value}</strong>
+            <span>{s.label}</span>
+          </div>
+        ))}
+      </div>
+      <a class="btn btn-red" target="_blank" rel="noopener noreferrer" href={mapsHref}>Abrir en Google Maps</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .location {
+    background: #f0dfd0;
+  }
+  .location-grid {
+    grid-template-columns: 1.2fr 0.8fr;
+  }
+  .map-card :global(img) {
+    width: 100%;
+    display: block;
+  }
+  .cards {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 22px 0 26px;
+  }
+  .mini {
+    background: #fff;
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    min-width: 112px;
+  }
+  .mini strong {
+    display: block;
+    font-family: var(--font-display);
+    color: var(--color-red);
+    font-size: 1.6rem;
+  }
+  .mini span {
+    font-size: 0.85rem;
+    color: var(--color-ink-soft);
+  }
+
+  @media (max-width: 900px) {
+    .location-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

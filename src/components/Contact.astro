@@ -1,0 +1,126 @@
+---
+import { site, timelineOptions, budgetOptions, paymentOptions } from '../data/content';
+---
+
+<section class="section contact" id="contacto" aria-labelledby="contact-heading">
+  <div class="wrap grid-2">
+    <div data-reveal>
+      <p class="eyebrow" style="color:#fff">Contacto</p>
+      <h2 class="title" id="contact-heading">Agenda una asesoría y conoce Alandar.</h2>
+      <p class="lede">Completa tus datos y un asesor podrá darte seguimiento.</p>
+    </div>
+
+    <form class="form" id="contactForm" data-reveal data-whatsapp={site.phoneWhatsapp} novalidate>
+      <div class="field">
+        <label for="name" class="visually-hidden">Nombre completo</label>
+        <input id="name" name="name" required placeholder="Nombre completo" autocomplete="name" />
+      </div>
+      <div class="field">
+        <label for="email" class="visually-hidden">Correo</label>
+        <input id="email" name="email" required type="email" placeholder="Correo" autocomplete="email" />
+      </div>
+      <div class="field">
+        <label for="whatsapp" class="visually-hidden">WhatsApp</label>
+        <input id="whatsapp" name="whatsapp" required placeholder="WhatsApp" autocomplete="tel" inputmode="tel" />
+      </div>
+      <div class="field">
+        <label for="timeline" class="visually-hidden">Tiempo estimado de compra</label>
+        <select id="timeline" name="timeline" required>
+          <option value="">¿En cuánto tiempo deseas concretar la compra de tu lote o terreno?</option>
+          {timelineOptions.map((opt) => <option>{opt}</option>)}
+        </select>
+      </div>
+      <div class="field">
+        <label for="budget" class="visually-hidden">Presupuesto</label>
+        <select id="budget" name="budget" required>
+          <option value="">¿Qué presupuesto tienes en mente?</option>
+          {budgetOptions.map((opt) => <option>{opt}</option>)}
+        </select>
+      </div>
+      <div class="field">
+        <label for="payment" class="visually-hidden">Método de pago</label>
+        <select id="payment" name="payment" required>
+          <option value="">¿Tienes contemplado algún método de pago o de financiamiento?</option>
+          {paymentOptions.map((opt) => <option>{opt}</option>)}
+        </select>
+      </div>
+      <button class="btn btn-red" type="submit" style="width:100%">Enviar formulario</button>
+      <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<style>
+  .contact {
+    background: var(--color-red);
+    color: #fff;
+  }
+  .contact p {
+    color: #fff;
+  }
+  .form {
+    background: #fff;
+    color: var(--color-dark);
+    border-radius: var(--radius-lg);
+    padding: 26px;
+    box-shadow: var(--shadow-lift);
+  }
+  .field {
+    margin-bottom: 12px;
+  }
+  input,
+  textarea,
+  select {
+    width: 100%;
+    padding: 14px 15px;
+    border: 1px solid #e4ddd5;
+    border-radius: 11px;
+    font: inherit;
+    color: inherit;
+  }
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--color-red);
+    outline-offset: 1px;
+  }
+  .form-status {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    color: var(--color-olive) !important;
+    min-height: 1.2em;
+  }
+</style>
+
+<script>
+  const form = document.getElementById('contactForm') as HTMLFormElement | null;
+  const status = document.getElementById('formStatus');
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const data = new FormData(form);
+    const phone = form.dataset.whatsapp;
+    const lines = [
+      'Hola, quiero agendar una asesoría para Alandar Paseo Residencial.',
+      `Nombre: ${data.get('name')}`,
+      `Correo: ${data.get('email')}`,
+      `WhatsApp: ${data.get('whatsapp')}`,
+      `Tiempo estimado: ${data.get('timeline')}`,
+      `Presupuesto: ${data.get('budget')}`,
+      `Método de pago: ${data.get('payment')}`,
+    ];
+
+    if (phone) {
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(lines.join('\n'))}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+
+    if (status) status.textContent = 'Gracias, tu solicitud se abrió en WhatsApp para enviarla a un asesor.';
+    form.reset();
+  });
+</script>
