@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import ctaImg from '../assets/img/cta.webp';
+import { cta } from '../data/content';
 ---
 
 <section class="cta" aria-labelledby="cta-heading">
@@ -16,11 +17,8 @@ import ctaImg from '../assets/img/cta.webp';
   <div class="cta-scrim" aria-hidden="true"></div>
   <div class="wrap grid-2 cta-content">
     <div data-reveal>
-      <h2 class="title" id="cta-heading">Conoce disponibilidad y precio actualizado.</h2>
-      <p class="lede">
-        Un asesor puede compartirte lotes disponibles, ubicación dentro de la etapa y plan de pago
-        vigente.
-      </p>
+      <h2 class="title" id="cta-heading">{cta.title}</h2>
+      <p class="lede">{cta.body}</p>
     </div>
     <div data-reveal>
       <button class="btn btn-white" data-modal-open="info">Solicitar información</button>

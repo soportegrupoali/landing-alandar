@@ -1,13 +1,13 @@
 ---
-import { site, timelineOptions, budgetOptions, paymentOptions } from '../data/content';
+import { site, contactSection, timelineOptions, budgetOptions, paymentOptions } from '../data/content';
 ---
 
 <section class="section contact" id="contacto" aria-labelledby="contact-heading">
   <div class="wrap grid-2">
     <div data-reveal>
-      <p class="eyebrow" style="color:#fff">Contacto</p>
-      <h2 class="title" id="contact-heading">Agenda una asesoría y conoce Alandar.</h2>
-      <p class="lede">Completa tus datos y un asesor podrá darte seguimiento.</p>
+      <p class="eyebrow" style="color:#fff">{contactSection.eyebrow}</p>
+      <h2 class="title" id="contact-heading">{contactSection.title}</h2>
+      <p class="lede">{contactSection.body}</p>
     </div>
 
     <form class="form" id="contactForm" data-reveal data-whatsapp={site.phoneWhatsapp} novalidate>

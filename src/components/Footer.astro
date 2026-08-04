@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/img/logo-alandar-blanco.png';
-import { site, nav } from '../data/content';
+import { site, nav, footerContent } from '../data/content';
 
 const year = new Date().getFullYear();
 ---
@@ -10,7 +10,7 @@ const year = new Date().getFullYear();
   <div class="wrap footer-grid">
     <div>
       <Image src={logo} alt="Alandar Paseo Residencial" widths={[160]} sizes="160px" class="footer-logo" />
-      <p class="footer-desc">{site.description}</p>
+      <p class="footer-desc">{footerContent.description}</p>
     </div>
 
     <nav aria-label="Enlaces del sitio">
@@ -34,9 +34,7 @@ const year = new Date().getFullYear();
 
   <div class="wrap footer-bottom">
     <p>&copy; {year} {site.name}. Todos los derechos reservados.</p>
-    <p class="footer-legal">
-      Renders, avances de obra y planes de financiamiento sujetos a disponibilidad y cambio sin previo aviso.
-    </p>
+    <p class="footer-legal">{footerContent.legal}</p>
   </div>
 </footer>
 

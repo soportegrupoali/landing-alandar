@@ -1,12 +1,13 @@
 ---
 import { Image } from 'astro:assets';
-import hero from '../assets/img/hero.webp';
+import heroImg from '../assets/img/hero.webp';
 import motifs from '../assets/img/iconos-circulares-blancos.png';
+import { hero } from '../data/content';
 ---
 
 <section class="hero" id="inicio">
   <Image
-    src={hero}
+    src={heroImg}
     alt="Vista nocturna de la casa club de Alandar Paseo Residencial rodeada de vegetación"
     class="hero-bg"
     widths={[640, 1024, 1600, 2200]}
@@ -18,11 +19,8 @@ import motifs from '../assets/img/iconos-circulares-blancos.png';
   <div class="wrap">
     <div class="content">
       <Image src={motifs} alt="" class="motifs" role="presentation" loading="eager" widths={[118]} sizes="118px" />
-      <h1>La tierra que conecta tus raíces con la vida moderna.</h1>
-      <p class="lede">
-        Privada residencial con casa club, áreas verdes, parques y espacios pensados para vivir con
-        tranquilidad, comunidad y bienestar.
-      </p>
+      <h1>{hero.title}</h1>
+      <p class="lede">{hero.subtitle}</p>
       <div class="hero-actions">
         <button class="btn btn-red" data-modal-open="brochure">Descargar brochure</button>
         <a class="btn btn-outline" href="#cotizador">Cotizar</a>

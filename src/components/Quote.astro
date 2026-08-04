@@ -2,6 +2,7 @@
 import { getImage } from 'astro:assets';
 import quoteMaster from '../assets/img/quote-master.png';
 import quoteEtapa1 from '../assets/img/quote-etapa1.png';
+import { quote } from '../data/content';
 
 const masterImg = await getImage({ src: quoteMaster, width: 900, format: 'webp' });
 const etapa1Img = await getImage({ src: quoteEtapa1, width: 900, format: 'webp' });
@@ -23,12 +24,9 @@ const etapa1Img = await getImage({ src: quoteEtapa1, width: 900, format: 'webp' 
       </div>
     </div>
     <div data-reveal>
-      <p class="eyebrow">Cotizador</p>
-      <h2 class="title" id="quote-heading">Genera tu cotización.</h2>
-      <p class="lede">
-        Cambia entre el master plan y la etapa 1 para ver una vista de cotización por lote. Esta
-        sección queda lista para conectarse a inventario real.
-      </p>
+      <p class="eyebrow">{quote.eyebrow}</p>
+      <h2 class="title" id="quote-heading">{quote.title}</h2>
+      <p class="lede">{quote.body}</p>
       <div class="quote-actions">
         <a class="btn btn-red" href="#contacto">Solicitar cotización con un asesor</a>
       </div>

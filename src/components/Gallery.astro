@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-import { gallery } from '../data/content';
+import { gallery, gallerySection } from '../data/content';
 
 const imgModules = import.meta.glob<{ default: ImageMetadata }>('../assets/img/galeria-*.webp', { eager: true });
 const imgFor = (name: string) => imgModules[`../assets/img/${name}.webp`]?.default;
@@ -10,12 +10,9 @@ const VISIBLE = 5;
 
 <section class="section gallery-section" id="galeria" aria-labelledby="galeria-heading">
   <div class="wrap">
-    <p class="eyebrow">Galería</p>
-    <h2 class="title" id="galeria-heading" data-reveal>Una experiencia visual de naturaleza, arquitectura y comunidad.</h2>
-    <p class="lede" data-reveal>
-      Explora renders y perspectivas del desarrollo. Da clic en cualquier imagen para verla en
-      grande.
-    </p>
+    <p class="eyebrow">{gallerySection.eyebrow}</p>
+    <h2 class="title" id="galeria-heading" data-reveal>{gallerySection.title}</h2>
+    <p class="lede" data-reveal>{gallerySection.body}</p>
 
     <div class="gal-grid" id="galGrid" data-reveal>
       {gallery.map((name, i) => {

@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import masterMap from '../assets/img/master-transparent.png';
-import { masterPlanPins } from '../data/content';
+import { masterPlan, masterPlanPins } from '../data/content';
 
 const iconModules = import.meta.glob<{ default: ImageMetadata }>('../assets/img/icon-*-white.png', { eager: true });
 const iconFor = (id: string) => iconModules[`../assets/img/icon-${id}-white.png`]?.default;
@@ -10,12 +10,9 @@ const iconFor = (id: string) => iconModules[`../assets/img/icon-${id}-white.png`
 
 <section class="section master" id="master-plan" aria-labelledby="master-heading">
   <div class="wrap">
-    <p class="eyebrow">Master plan</p>
-    <h2 class="title" id="master-heading" data-reveal>Orden, naturaleza y comunidad en un mismo recorrido.</h2>
-    <p class="lede" data-reveal>
-      El diseño integra áreas verdes, parques, vialidades y amenidades para conectar cada etapa con
-      espacios de convivencia y bienestar. Explora los puntos del mapa para conocer cada espacio.
-    </p>
+    <p class="eyebrow">{masterPlan.eyebrow}</p>
+    <h2 class="title" id="master-heading" data-reveal>{masterPlan.title}</h2>
+    <p class="lede" data-reveal>{masterPlan.body}</p>
 
     <div class="master-map" data-reveal>
       <Image

@@ -1,0 +1,181 @@
+# Contenido editable de la landing de Alandar.
+# Este archivo se edita desde el panel /admin (Decap CMS) o directamente aquí.
+# Los campos "id" de las listas (amenities, masterPlanPins, etc.) no deben
+# borrarse ni cambiarse: conectan cada texto con su imagen/ícono correspondiente.
+
+seo:
+  description: >-
+    Alandar Paseo Residencial: privada de 600 lotes residenciales en San
+    Antonio Hool, al norte de Mérida. Casa club, áreas verdes, parques y
+    amenidades para vivir hacia afuera.
+
+contact:
+  phoneDisplay: "+52 999 000 0000"
+  phoneWhatsapp: "5219990000000"
+  email: ventas@alandarmerida.com
+
+hero:
+  title: La tierra que conecta tus raíces con la vida moderna.
+  subtitle: >-
+    Privada residencial con casa club, áreas verdes, parques y espacios
+    pensados para vivir con tranquilidad, comunidad y bienestar.
+
+project:
+  eyebrow: Alandar | Proyecto
+  title: Un desarrollo planeado para vivir hacia afuera.
+  body: >-
+    Vivir hacia afuera significa que la vida no se queda únicamente dentro
+    del lote: se extiende hacia parques, andadores, casa club, áreas verdes
+    y espacios comunes que invitan a caminar, convivir, ejercitarte y
+    disfrutar el entorno todos los días.
+  stats:
+    - label: Lotes residenciales
+      value: "600"
+    - label: Etapas
+      value: "7"
+    - label: Desde
+      value: 250 m²
+
+masterPlan:
+  eyebrow: Master plan
+  title: Orden, naturaleza y comunidad en un mismo recorrido.
+  body: >-
+    El diseño integra áreas verdes, parques, vialidades y amenidades para
+    conectar cada etapa con espacios de convivencia y bienestar. Explora los
+    puntos del mapa para conocer cada espacio.
+  pins:
+    - id: casa
+      title: Casa Club
+      desc: Área de convivencia y deportivo para fortalecer la vida en comunidad.
+    - id: zona
+      title: Zona Comercial
+      desc: Espacio destinado a tiendas y servicios para mayor comodidad.
+    - id: botanico
+      title: Jardín botánico/sensorial
+      desc: Espacios verdes con vegetación variada para relajación.
+    - id: holistico
+      title: Jardín holístico
+      desc: Lugar diseñado para actividades de bienestar y meditación.
+    - id: canchas
+      title: Cancha de pádel y básquetbol
+      desc: Instalaciones deportivas para actividades recreativas.
+    - id: gym1
+      title: Gimnasio al aire libre
+      desc: Área con equipo para ejercicio en exterior.
+    - id: active
+      title: Active Park
+      desc: Equipamiento de gimnasio exterior, áreas verdes y mobiliario urbano.
+    - id: multi
+      title: Multifuncional/Yoga
+      desc: Espacios abiertos para actividades deportivas y relajación.
+    - id: infantil
+      title: Juegos infantiles
+      desc: Áreas diseñadas para la diversión de los niños.
+    - id: pet
+      title: Pet Park
+      desc: Espacio recreativo para mascotas.
+    - id: picnic
+      title: Picnic/reunión/terrazas
+      desc: Zonas de convivencia al aire libre.
+
+location:
+  eyebrow: Ubicación cómoda y exclusiva
+  title: Conecta con lo mejor de Mérida.
+  body: >-
+    San Antonio Hool combina tranquilidad y excelente conectividad. Se
+    encuentra cerca del Periférico de Mérida y permite conectar con plazas,
+    universidades, servicios y la costa yucateca.
+  stats:
+    - value: 8 min
+      label: al periférico
+    - value: 20 min
+      label: a la costa
+    - value: A pasos
+      label: de servicios
+
+amenities:
+  eyebrow: Amenidades
+  title: Espacios pensados para cada forma de vivir.
+  body: Una casa club y parques para activar, descansar, convivir y disfrutar todos los días.
+  items:
+    - img: amenidad-1
+      title: Alberca recreativa
+      desc: Pausas reales entre el sol, el agua y la naturaleza.
+    - img: amenidad-2
+      title: Carril de nado
+      desc: Bienestar activo dentro de tu propia comunidad.
+    - img: amenidad-3
+      title: Canchas
+      desc: Espacios deportivos para compartir y mantenerte activo.
+    - img: amenidad-4
+      title: Casa Club
+      desc: El corazón social de Alandar.
+    - img: amenidad-5
+      title: Cowork
+      desc: Un entorno cómodo para trabajar y crear.
+    - img: amenidad-6
+      title: Ludoteca
+      desc: Espacio seguro para aprender y jugar.
+    - img: amenidad-7
+      title: Gimnasio
+      desc: Rutina constante sin salir de casa.
+
+cta:
+  title: Conoce disponibilidad y precio actualizado.
+  body: >-
+    Un asesor puede compartirte lotes disponibles, ubicación dentro de la
+    etapa y plan de pago vigente.
+
+progress:
+  eyebrow: Avance de obra
+  title: Un proyecto que avanza contigo.
+  body: Da seguimiento al progreso del desarrollo con material audiovisual actualizado del proyecto.
+  video:
+    # provider: "local" usa el mp4 propio; "vimeo" incrusta el video de Vimeo.
+    provider: local
+    vimeoId: ""
+    localSrc: /media/alandar-04.mp4
+
+financing:
+  eyebrow: Plan de financiamiento
+  title: Opciones pensadas para facilitar tu inversión.
+  body: Planes sujetos a disponibilidad, vigencia y condiciones comerciales del proyecto.
+  items:
+    - label: Apartado
+      value: $10 Mil
+      note: ""
+    - label: Hasta
+      value: 36 MSI
+      note: ""
+    - label: Descuento
+      value: 14%
+      note: "*Últimas 3 unidades seleccionadas"
+
+quote:
+  eyebrow: Cotizador
+  title: Genera tu cotización.
+  body: >-
+    Cambia entre el master plan y la etapa 1 para ver una vista de
+    cotización por lote. Esta sección queda lista para conectarse a
+    inventario real.
+
+gallery:
+  eyebrow: Galería
+  title: Una experiencia visual de naturaleza, arquitectura y comunidad.
+  body: >-
+    Explora renders y perspectivas del desarrollo. Da clic en cualquier
+    imagen para verla en grande.
+
+contactSection:
+  eyebrow: Contacto
+  title: Agenda una asesoría y conoce Alandar.
+  body: Completa tus datos y un asesor podrá darte seguimiento.
+
+footer:
+  description: >-
+    Alandar Paseo Residencial: privada de 600 lotes residenciales en San
+    Antonio Hool, al norte de Mérida. Casa club, áreas verdes, parques y
+    amenidades para vivir hacia afuera.
+  legal: >-
+    Renders, avances de obra y planes de financiamiento sujetos a
+    disponibilidad y cambio sin previo aviso.

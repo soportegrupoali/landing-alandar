@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-import { amenities } from '../data/content';
+import { amenities, amenitiesSection } from '../data/content';
 
 const imgModules = import.meta.glob<{ default: ImageMetadata }>('../assets/img/amenidad-*.webp', { eager: true });
 const imgFor = (name: string) => imgModules[`../assets/img/${name}.webp`]?.default;
@@ -9,9 +9,9 @@ const imgFor = (name: string) => imgModules[`../assets/img/${name}.webp`]?.defau
 
 <section class="section" id="amenidades" aria-labelledby="amenidades-heading">
   <div class="wrap">
-    <p class="eyebrow">Amenidades</p>
-    <h2 class="title" id="amenidades-heading" data-reveal>Espacios pensados<br />para cada forma de vivir.</h2>
-    <p class="lede" data-reveal>Una casa club y parques para activar, descansar, convivir y disfrutar todos los días.</p>
+    <p class="eyebrow">{amenitiesSection.eyebrow}</p>
+    <h2 class="title" id="amenidades-heading" data-reveal>{amenitiesSection.title}</h2>
+    <p class="lede" data-reveal>{amenitiesSection.body}</p>
 
     <div class="slider" data-reveal>
       <ul class="track" id="amenTrack">

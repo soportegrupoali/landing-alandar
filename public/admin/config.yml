@@ -1,0 +1,175 @@
+backend:
+  name: github
+  repo: soportegrupoali/landing-alandar
+  branch: main
+  # Este Worker de OAuth es el único que sabe el client secret de GitHub.
+  # Ver /admin/README-DEPLOY.md para cómo se despliega.
+  base_url: https://landing-alandar-cms-auth.landing-alandar-2026.workers.dev
+  auth_endpoint: auth
+
+# Antes de publicar, cada cambio queda como borrador (Pull Request) en vez de
+# irse directo a producción — así alguien revisa el copy antes de que salga.
+publish_mode: editorial_workflow
+
+media_folder: "public/media/uploads"
+public_folder: "/media/uploads"
+
+collections:
+  - name: site
+    label: Contenido del sitio
+    files:
+      - name: config
+        label: Copy y datos editables
+        file: src/content/site.yaml
+        fields:
+          - label: SEO
+            name: seo
+            widget: object
+            fields:
+              - { label: "Descripción (meta / buscadores)", name: description, widget: text }
+
+          - label: Contacto
+            name: contact
+            widget: object
+            fields:
+              - { label: "Teléfono (texto visible)", name: phoneDisplay, widget: string }
+              - { label: "WhatsApp (solo números, con código de país, ej. 5219991234567)", name: phoneWhatsapp, widget: string, pattern: ['^[0-9]{10,15}$', "Solo números, sin +, espacios ni guiones"] }
+              - { label: Correo, name: email, widget: string }
+
+          - label: Hero (portada)
+            name: hero
+            widget: object
+            fields:
+              - { label: Título, name: title, widget: string }
+              - { label: Subtítulo, name: subtitle, widget: text }
+
+          - label: "Sección: Proyecto"
+            name: project
+            widget: object
+            fields:
+              - { label: Eyebrow (texto pequeño superior), name: eyebrow, widget: string }
+              - { label: Título, name: title, widget: string }
+              - { label: Párrafo, name: body, widget: text }
+              - label: Estadísticas
+                name: stats
+                widget: list
+                fields:
+                  - { label: Etiqueta, name: label, widget: string }
+                  - { label: Valor, name: value, widget: string }
+
+          - label: "Sección: Master Plan"
+            name: masterPlan
+            widget: object
+            fields:
+              - { label: Eyebrow, name: eyebrow, widget: string }
+              - { label: Título, name: title, widget: string }
+              - { label: Párrafo, name: body, widget: text }
+              - label: "Puntos del mapa (no agregar ni quitar, solo editar texto)"
+                name: pins
+                widget: list
+                fields:
+                  - { label: "ID (NO CAMBIAR, conecta con el ícono en el mapa)", name: id, widget: string }
+                  - { label: Título, name: title, widget: string }
+                  - { label: Descripción, name: desc, widget: text }
+
+          - label: "Sección: Ubicación"
+            name: location
+            widget: object
+            fields:
+              - { label: Eyebrow, name: eyebrow, widget: string }
+              - { label: Título, name: title, widget: string }
+              - { label: Párrafo, name: body, widget: text }
+              - label: Datos de conectividad
+                name: stats
+                widget: list
+                fields:
+                  - { label: Valor, name: value, widget: string }
+                  - { label: Etiqueta, name: label, widget: string }
+
+          - label: "Sección: Amenidades"
+            name: amenities
+            widget: object
+            fields:
+              - { label: Eyebrow, name: eyebrow, widget: string }
+              - { label: Título, name: title, widget: string }
+              - { label: Párrafo, name: body, widget: text }
+              - label: "Amenidades (no agregar ni quitar, solo editar texto)"
+                name: items
+                widget: list
+                fields:
+                  - { label: "Imagen (NO CAMBIAR, coincide con el archivo en src/assets/img)", name: img, widget: string }
+                  - { label: Título, name: title, widget: string }
+                  - { label: Descripción, name: desc, widget: text }
+
+          - label: "Sección: Disponibilidad (CTA verde)"
+            name: cta
+            widget: object
+            fields:
+              - { label: Título, name: title, widget: string }
+              - { label: Párrafo, name: body, widget: text }
+
+          - label: "Sección: Avance de obra / Video"
+            name: progress
+            widget: object
+            fields:
+              - { label: Eyebrow, name: eyebrow, widget: string }
+              - { label: Título, name: title, widget: string }
+              - { label: Párrafo, name: body, widget: text }
+              - label: Video
+                name: video
+                widget: object
+                fields:
+                  - label: "Fuente del video"
+                    name: provider
+                    widget: select
+                    options:
+                      - { label: "Video local (archivo .mp4 en el sitio)", value: local }
+                      - { label: "Vimeo (pega solo el ID del video)", value: vimeo }
+                  - { label: "ID del video de Vimeo (ej. si la URL es vimeo.com/123456789, el ID es 123456789)", name: vimeoId, widget: string, required: false }
+                  - { label: "Ruta del video local (NO CAMBIAR salvo que subas un archivo nuevo)", name: localSrc, widget: string }
+
+          - label: "Sección: Financiamiento"
+            name: financing
+            widget: object
+            fields:
+              - { label: Eyebrow, name: eyebrow, widget: string }
+              - { label: Título, name: title, widget: string }
+              - { label: Párrafo, name: body, widget: text }
+              - label: Tarjetas
+                name: items
+                widget: list
+                fields:
+                  - { label: Etiqueta, name: label, widget: string }
+                  - { label: Valor, name: value, widget: string }
+                  - { label: "Nota (opcional)", name: note, widget: string, required: false }
+
+          - label: "Sección: Cotizador"
+            name: quote
+            widget: object
+            fields:
+              - { label: Eyebrow, name: eyebrow, widget: string }
+              - { label: Título, name: title, widget: string }
+              - { label: Párrafo, name: body, widget: text }
+
+          - label: "Sección: Galería"
+            name: gallery
+            widget: object
+            fields:
+              - { label: Eyebrow, name: eyebrow, widget: string }
+              - { label: Título, name: title, widget: string }
+              - { label: Párrafo, name: body, widget: text }
+
+          - label: "Sección: Contacto (formulario)"
+            name: contactSection
+            widget: object
+            fields:
+              - { label: Eyebrow, name: eyebrow, widget: string }
+              - { label: Título, name: title, widget: string }
+              - { label: Párrafo, name: body, widget: text }
+
+          - label: Pie de página
+            name: footer
+            widget: object
+            fields:
+              - { label: Descripción, name: description, widget: text }
+              - { label: Texto legal, name: legal, widget: text }
