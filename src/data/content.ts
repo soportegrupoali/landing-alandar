@@ -17,11 +17,12 @@ export const site = {
   phoneDisplay: raw.contact.phoneDisplay as string,
   phoneWhatsapp: raw.contact.phoneWhatsapp as string,
   email: raw.contact.email as string,
-  address: {
-    street: 'San Antonio Hool',
-    locality: 'Mérida',
-    region: 'Yucatán',
-    country: 'MX',
+  address: raw.contact.address as {
+    street: string;
+    locality: string;
+    region: string;
+    postalCode: string;
+    country: string;
   },
 } as const;
 
@@ -42,7 +43,7 @@ export const nav = [
 type Copy = { eyebrow: string; title: string; body: string };
 type Stat = { value: string; label: string };
 
-export const project = raw.project as Copy & { stats: Stat[] };
+export const project = raw.project as Copy & { closing?: string; stats: Stat[] };
 export const stats = project.stats;
 
 export type MasterPlanPin = { id: string; title: string; desc: string; icon: string; x: number; y: number };
@@ -77,13 +78,17 @@ export const cta = raw.cta as { title: string; body: string };
 type VideoConfig = { provider: 'local' | 'vimeo'; vimeoId: string; localSrc: string };
 export const progress = raw.progress as Copy & { video: VideoConfig };
 
-export const financingSection = raw.financing as Copy;
+export const financingSection = raw.financing as Copy & { ctaLabel?: string };
 export const financing = raw.financing.items as { label: string; value: string; note: string }[];
 
-export const quote = raw.quote as Copy;
+export const quote = raw.quote as Copy & { ctaLabel?: string; iframeUrl?: string };
 export const gallerySection = raw.gallery as Copy;
 export const contactSection = raw.contactSection as Copy;
-export const footerContent = raw.footer as { description: string; legal: string };
+export const footerContent = raw.footer as {
+  description: string;
+  legal: string;
+  legalLinks: { label: string; href: string }[];
+};
 
 export const gallery = [
   'galeria-1', 'galeria-2', 'galeria-3', 'galeria-4', 'galeria-5', 'galeria-6', 'galeria-7', 'galeria-8',

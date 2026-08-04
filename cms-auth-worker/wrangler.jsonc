@@ -4,12 +4,12 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-08-04",
   "vars": {
-    // Público (no es secreto): Client ID de la GitHub OAuth App.
-    // Lo da GitHub al crear la app en Settings > Developer settings > OAuth Apps.
-    "GITHUB_CLIENT_ID": "Ov23lixvbaV4AFOJLE9N",
+    // Públicos (no son secretos): identifican la Access Application, no dan acceso por sí solos.
+    "CF_ACCESS_TEAM_DOMAIN": "PENDIENTE_DE_CONFIGURAR",
+    "CF_ACCESS_AUD": "PENDIENTE_DE_CONFIGURAR",
     "ALLOWED_REPO": "soportegrupoali/landing-alandar"
   }
-  // GITHUB_CLIENT_SECRET NO va aquí (este archivo se sube a git).
+  // GITHUB_SHARED_TOKEN NO va aquí (este archivo se sube a git).
   // Se configura aparte y queda cifrado en Cloudflare:
-  //   wrangler secret put GITHUB_CLIENT_SECRET
+  //   wrangler secret put GITHUB_SHARED_TOKEN
 }

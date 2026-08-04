@@ -10,9 +10,11 @@ const VISIBLE = 5;
 
 <section class="section gallery-section" id="galeria" aria-labelledby="galeria-heading">
   <div class="wrap">
-    <p class="eyebrow">{gallerySection.eyebrow}</p>
-    <h2 class="title" id="galeria-heading" data-reveal>{gallerySection.title}</h2>
-    <p class="lede" data-reveal>{gallerySection.body}</p>
+    <header class="section-head">
+      <p class="eyebrow">{gallerySection.eyebrow}</p>
+      <h2 class="title" id="galeria-heading" data-reveal>{gallerySection.title.replace(/\n/g, ' ')}</h2>
+      <p class="lede" data-reveal>{gallerySection.body}</p>
+    </header>
 
     <div class="gal-grid" id="galGrid" data-reveal>
       {gallery.map((name, i) => {
@@ -39,8 +41,8 @@ const VISIBLE = 5;
     </div>
 
     {gallery.length > VISIBLE && (
-      <p style="margin-top:24px">
-        <button class="btn btn-white" id="moreGallery" aria-expanded="false" aria-controls="galGrid">
+      <p class="gal-more">
+        <button class="btn btn-red" id="moreGallery" aria-expanded="false" aria-controls="galGrid">
           Ver más imágenes
         </button>
       </p>
@@ -57,31 +59,39 @@ const VISIBLE = 5;
 
 <style>
   .gallery-section {
-    background: #050504;
-    color: #fff;
+    background: #fff;
+    color: var(--color-dark);
   }
   .gallery-section p {
-    color: #d6d0c6;
+    color: var(--color-ink-soft);
+  }
+  .section-head {
+    max-width: 46rem;
   }
   .gal-grid {
     display: grid;
-    grid-template-columns: 1.15fr 0.85fr 0.85fr;
-    grid-auto-rows: 220px;
+    grid-template-columns: 1.2fr 0.9fr 0.9fr;
+    grid-auto-rows: minmax(180px, 22vw);
     gap: 14px;
     margin-top: 30px;
   }
   .gal-item {
+    display: block;
+    width: 100%;
+    height: 100%;
     border: 0;
     padding: 0;
     cursor: pointer;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-soft);
+    background: #e8e0d6;
   }
   .gal-item :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
     display: block;
     transition: transform 0.4s ease;
   }
@@ -101,6 +111,9 @@ const VISIBLE = 5;
   }
   .gal-grid.more-open .hidden-gal {
     display: block;
+  }
+  .gal-more {
+    margin-top: 24px;
   }
 
   .lightbox {
@@ -122,6 +135,9 @@ const VISIBLE = 5;
   .lightbox img {
     max-width: min(1100px, 92vw);
     max-height: 86vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
     border-radius: 12px;
     box-shadow: var(--shadow-lift);
   }
@@ -157,11 +173,39 @@ const VISIBLE = 5;
 
   @media (max-width: 900px) {
     .gal-grid {
-      grid-template-columns: 1fr;
-      grid-auto-rows: 240px;
+      grid-template-columns: 1fr 1fr;
+      grid-auto-rows: minmax(140px, 28vw);
     }
     .gal-item:first-child {
+      grid-column: 1 / -1;
       grid-row: auto;
+      aspect-ratio: 16 / 9;
+      height: auto;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .gal-grid {
+      grid-template-columns: 1fr;
+      grid-auto-rows: auto;
+      gap: 12px;
+    }
+    .gal-item {
+      aspect-ratio: 16 / 9;
+      height: auto;
+    }
+    .gal-item:first-child {
+      grid-column: auto;
+    }
+    .lightbox-nav {
+      width: 44px;
+      height: 44px;
+    }
+    .lightbox-nav.prev {
+      left: 10px;
+    }
+    .lightbox-nav.next {
+      right: 10px;
     }
   }
 </style>

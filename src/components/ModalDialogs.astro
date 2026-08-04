@@ -7,12 +7,18 @@ import { site } from '../data/content';
   <h3 class="title modal-title">Descarga el brochure</h3>
   <p>Déjanos tus datos para habilitar la descarga.</p>
   <form id="brochureForm" data-whatsapp={site.phoneWhatsapp} data-pdf="/media/brochure-alandar-2026.pdf">
-    <label for="b-name" class="visually-hidden">Nombre</label>
-    <input id="b-name" name="name" required placeholder="Nombre" autocomplete="name" />
-    <label for="b-phone" class="visually-hidden">Teléfono</label>
-    <input id="b-phone" name="phone" required placeholder="Teléfono" autocomplete="tel" inputmode="tel" />
-    <label for="b-email" class="visually-hidden">Correo</label>
-    <input id="b-email" name="email" required type="email" placeholder="Correo" autocomplete="email" />
+    <div class="field">
+      <label class="field-label" for="b-name">Nombre</label>
+      <input id="b-name" name="name" required placeholder="Tu nombre" autocomplete="name" />
+    </div>
+    <div class="field">
+      <label class="field-label" for="b-phone">Teléfono</label>
+      <input id="b-phone" name="phone" required placeholder="999 000 0000" autocomplete="tel" inputmode="tel" />
+    </div>
+    <div class="field">
+      <label class="field-label" for="b-email">Correo</label>
+      <input id="b-email" name="email" required type="email" placeholder="correo@ejemplo.com" autocomplete="email" />
+    </div>
     <button class="btn btn-red" style="width:100%" type="submit">Descargar brochure</button>
   </form>
 </dialog>
@@ -21,46 +27,53 @@ import { site } from '../data/content';
   <button class="x" data-close aria-label="Cerrar">×</button>
   <h3 class="title modal-title">Solicita información</h3>
   <form id="infoForm" data-whatsapp={site.phoneWhatsapp}>
-    <label for="i-name" class="visually-hidden">Nombre y apellido</label>
-    <input id="i-name" name="name" required placeholder="Nombre y apellido" autocomplete="name" />
-    <label for="i-phone" class="visually-hidden">Teléfono</label>
-    <input id="i-phone" name="phone" required placeholder="Teléfono" autocomplete="tel" inputmode="tel" />
-    <label for="i-email" class="visually-hidden">Correo</label>
-    <input id="i-email" name="email" required type="email" placeholder="Correo" autocomplete="email" />
-    <label for="i-message" class="visually-hidden">Mensaje</label>
-    <textarea id="i-message" name="message" placeholder="Mensaje"></textarea>
+    <div class="field">
+      <label class="field-label" for="i-name">Nombre y apellido</label>
+      <input id="i-name" name="name" required placeholder="Tu nombre" autocomplete="name" />
+    </div>
+    <div class="field">
+      <label class="field-label" for="i-phone">Teléfono</label>
+      <input id="i-phone" name="phone" required placeholder="999 000 0000" autocomplete="tel" inputmode="tel" />
+    </div>
+    <div class="field">
+      <label class="field-label" for="i-email">Correo</label>
+      <input id="i-email" name="email" required type="email" placeholder="correo@ejemplo.com" autocomplete="email" />
+    </div>
+    <div class="field">
+      <label class="field-label" for="i-message">Mensaje</label>
+      <textarea id="i-message" name="message" placeholder="Cuéntanos cómo podemos ayudarte"></textarea>
+    </div>
     <button class="btn btn-red" style="width:100%" type="submit">Enviar mensaje</button>
   </form>
 </dialog>
 
 <style>
   .modal {
+    position: relative;
     border: 0;
     border-radius: 24px;
     padding: 28px;
     width: min(520px, 94vw);
     box-shadow: var(--shadow-lift);
     margin: auto;
+    background: #fff;
   }
   .modal::backdrop {
     background: rgba(0, 0, 0, 0.58);
   }
   .modal-title {
-    font-size: 2rem;
+    font-size: clamp(1.6rem, 3vw, 2rem);
     margin-bottom: 6px;
+    max-width: none;
+    padding-right: 36px;
   }
-  .modal input,
-  .modal textarea {
-    width: 100%;
-    padding: 14px 15px;
-    border: 1px solid #e4ddd5;
-    border-radius: 11px;
-    margin-bottom: 12px;
-    font: inherit;
+  .modal form {
+    display: grid;
+    gap: 4px;
+    margin-top: 16px;
   }
-  .modal textarea {
-    min-height: 95px;
-    resize: vertical;
+  .modal p {
+    color: var(--color-ink-soft);
   }
   .x {
     position: absolute;
@@ -73,6 +86,9 @@ import { site } from '../data/content';
     height: 36px;
     cursor: pointer;
     font-size: 1.1rem;
+    display: grid;
+    place-items: center;
+    line-height: 1;
   }
 </style>
 

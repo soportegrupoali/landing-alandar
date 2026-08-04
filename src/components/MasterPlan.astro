@@ -10,9 +10,11 @@ const iconFor = (id: string) => iconModules[`../assets/img/icon-${id}-white.png`
 
 <section class="section master" id="master-plan" aria-labelledby="master-heading">
   <div class="wrap">
-    <p class="eyebrow">{masterPlan.eyebrow}</p>
-    <h2 class="title" id="master-heading" data-reveal>{masterPlan.title}</h2>
-    <p class="lede" data-reveal>{masterPlan.body}</p>
+    <header class="section-head">
+      <p class="eyebrow">{masterPlan.eyebrow}</p>
+      <h2 class="title" id="master-heading" data-reveal>{masterPlan.title.replace(/\n/g, ' ')}</h2>
+      <p class="lede" data-reveal>{masterPlan.body}</p>
+    </header>
 
     <div class="master-map" data-reveal>
       <Image
@@ -46,12 +48,18 @@ const iconFor = (id: string) => iconModules[`../assets/img/icon-${id}-white.png`
 </section>
 
 <style>
+  .section-head {
+    max-width: 46rem;
+  }
   .master-map {
     position: relative;
-    margin-top: 32px;
+    margin-top: clamp(24px, 4vw, 40px);
+    border-radius: var(--radius-lg);
+    overflow: visible;
   }
   .master-map :global(img) {
     width: 100%;
+    height: auto;
     display: block;
   }
   .pin {
@@ -80,6 +88,7 @@ const iconFor = (id: string) => iconModules[`../assets/img/icon-${id}-white.png`
   .pin :global(img) {
     width: 28px;
     height: 28px;
+    object-fit: contain;
   }
   .pin:hover,
   .pin:focus-visible {
@@ -105,7 +114,7 @@ const iconFor = (id: string) => iconModules[`../assets/img/icon-${id}-white.png`
     left: 50%;
     bottom: calc(100% + 12px);
     transform: translateX(-50%);
-    width: min(250px, 60vw);
+    width: min(250px, 68vw);
     background: #fff;
     border-radius: 16px;
     padding: 16px 18px;
@@ -122,6 +131,7 @@ const iconFor = (id: string) => iconModules[`../assets/img/icon-${id}-white.png`
     color: var(--color-red);
     font-size: 1.05rem;
     margin-bottom: 4px;
+    line-height: 1.2;
   }
   .tooltip span {
     display: block;
@@ -138,15 +148,27 @@ const iconFor = (id: string) => iconModules[`../assets/img/icon-${id}-white.png`
 
   @media (max-width: 900px) {
     .pin {
-      width: 38px;
-      height: 38px;
+      width: 34px;
+      height: 34px;
     }
     .pin :global(img) {
-      width: 22px;
-      height: 22px;
+      width: 18px;
+      height: 18px;
     }
     .tooltip {
-      width: min(220px, 68vw);
+      width: min(200px, 72vw);
+      padding: 12px 14px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .pin {
+      width: 28px;
+      height: 28px;
+    }
+    .pin :global(img) {
+      width: 14px;
+      height: 14px;
     }
   }
 </style>

@@ -1,5 +1,26 @@
 ---
 import { site, contactSection, timelineOptions, budgetOptions, paymentOptions } from '../data/content';
+
+const selects = [
+  {
+    id: 'timeline',
+    name: 'timeline',
+    label: 'Tiempo estimado de compra',
+    options: [...timelineOptions],
+  },
+  {
+    id: 'budget',
+    name: 'budget',
+    label: 'Presupuesto',
+    options: [...budgetOptions],
+  },
+  {
+    id: 'payment',
+    name: 'payment',
+    label: 'Método de pago',
+    options: [...paymentOptions],
+  },
+] as const;
 ---
 
 <section class="section contact" id="contacto" aria-labelledby="contact-heading">
@@ -12,39 +33,47 @@ import { site, contactSection, timelineOptions, budgetOptions, paymentOptions } 
 
     <form class="form" id="contactForm" data-reveal data-whatsapp={site.phoneWhatsapp} novalidate>
       <div class="field">
-        <label for="name" class="visually-hidden">Nombre completo</label>
-        <input id="name" name="name" required placeholder="Nombre completo" autocomplete="name" />
+        <label class="field-label" for="name">Nombre completo</label>
+        <input id="name" name="name" required placeholder="Tu nombre" autocomplete="name" />
       </div>
       <div class="field">
-        <label for="email" class="visually-hidden">Correo</label>
-        <input id="email" name="email" required type="email" placeholder="Correo" autocomplete="email" />
+        <label class="field-label" for="email">Correo</label>
+        <input id="email" name="email" required type="email" placeholder="correo@ejemplo.com" autocomplete="email" />
       </div>
       <div class="field">
-        <label for="whatsapp" class="visually-hidden">WhatsApp</label>
-        <input id="whatsapp" name="whatsapp" required placeholder="WhatsApp" autocomplete="tel" inputmode="tel" />
+        <label class="field-label" for="whatsapp">WhatsApp</label>
+        <input id="whatsapp" name="whatsapp" required placeholder="999 000 0000" autocomplete="tel" inputmode="tel" />
       </div>
-      <div class="field">
-        <label for="timeline" class="visually-hidden">Tiempo estimado de compra</label>
-        <select id="timeline" name="timeline" required>
-          <option value="">¿En cuánto tiempo deseas concretar la compra de tu lote o terreno?</option>
-          {timelineOptions.map((opt) => <option>{opt}</option>)}
-        </select>
-      </div>
-      <div class="field">
-        <label for="budget" class="visually-hidden">Presupuesto</label>
-        <select id="budget" name="budget" required>
-          <option value="">¿Qué presupuesto tienes en mente?</option>
-          {budgetOptions.map((opt) => <option>{opt}</option>)}
-        </select>
-      </div>
-      <div class="field">
-        <label for="payment" class="visually-hidden">Método de pago</label>
-        <select id="payment" name="payment" required>
-          <option value="">¿Tienes contemplado algún método de pago o de financiamiento?</option>
-          {paymentOptions.map((opt) => <option>{opt}</option>)}
-        </select>
-      </div>
-      <button class="btn btn-red" type="submit" style="width:100%">Enviar formulario</button>
+
+      {selects.map((field) => (
+        <div class="field">
+          <span class="field-label" id={`${field.id}-label`}>{field.label}</span>
+          <div class="custom-select" data-custom-select>
+            <input type="hidden" id={field.id} name={field.name} required value="" data-select-input />
+            <button
+              type="button"
+              class="custom-select-trigger is-placeholder"
+              id={`${field.id}-trigger`}
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-labelledby={`${field.id}-label ${field.id}-trigger`}
+              data-select-trigger
+            >
+              <span data-select-value>Selecciona una opción</span>
+              <svg class="custom-select-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            <ul class="custom-select-menu" role="listbox" id={`${field.id}-listbox`} hidden data-select-menu>
+              {field.options.map((opt) => (
+                <li role="option" tabindex="-1" data-value={opt} aria-selected="false">{opt}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ))}
+
+      <button class="btn btn-red form-submit" type="submit">Enviar formulario</button>
       <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
     </form>
   </div>
@@ -55,6 +84,10 @@ import { site, contactSection, timelineOptions, budgetOptions, paymentOptions } 
     background: var(--color-red);
     color: #fff;
   }
+  .contact .title {
+    color: #fff;
+    max-width: 16ch;
+  }
   .contact p {
     color: #fff;
   }
@@ -62,27 +95,12 @@ import { site, contactSection, timelineOptions, budgetOptions, paymentOptions } 
     background: #fff;
     color: var(--color-dark);
     border-radius: var(--radius-lg);
-    padding: 26px;
+    padding: clamp(20px, 3vw, 28px);
     box-shadow: var(--shadow-lift);
   }
-  .field {
-    margin-bottom: 12px;
-  }
-  input,
-  textarea,
-  select {
+  .form-submit {
     width: 100%;
-    padding: 14px 15px;
-    border: 1px solid #e4ddd5;
-    border-radius: 11px;
-    font: inherit;
-    color: inherit;
-  }
-  input:focus-visible,
-  select:focus-visible,
-  textarea:focus-visible {
-    outline: 2px solid var(--color-red);
-    outline-offset: 1px;
+    margin-top: 4px;
   }
   .form-status {
     margin-top: 12px;
@@ -90,16 +108,247 @@ import { site, contactSection, timelineOptions, budgetOptions, paymentOptions } 
     color: var(--color-olive) !important;
     min-height: 1.2em;
   }
+
+  .custom-select {
+    position: relative;
+  }
+  .custom-select-trigger {
+    position: relative;
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 44px 12px 14px;
+    border: 1px solid #e4ddd5;
+    border-radius: 11px;
+    background: #fff;
+    font: inherit;
+    font-size: 0.95rem;
+    line-height: 1.35;
+    color: var(--color-dark);
+    text-align: left;
+    cursor: pointer;
+    display: block;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .custom-select-trigger.is-placeholder {
+    color: #9a948c;
+  }
+  .custom-select-trigger:hover {
+    border-color: #d2c8bc;
+  }
+  .custom-select-trigger[aria-expanded='true'],
+  .custom-select-trigger:focus-visible {
+    border-color: var(--color-red);
+    box-shadow: 0 0 0 3px rgba(189, 85, 78, 0.18);
+    outline: none;
+  }
+  .custom-select.is-invalid .custom-select-trigger {
+    border-color: var(--color-red);
+    box-shadow: 0 0 0 3px rgba(189, 85, 78, 0.18);
+  }
+  .custom-select-chevron {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #686868;
+    flex-shrink: 0;
+    pointer-events: none;
+    transition: transform 0.2s ease;
+  }
+  .custom-select-trigger[aria-expanded='true'] .custom-select-chevron {
+    transform: translateY(-50%) rotate(180deg);
+    color: var(--color-red);
+  }
+  .custom-select-menu {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 6px);
+    z-index: 20;
+    margin: 0;
+    padding: 8px;
+    list-style: none;
+    background: #fff;
+    border: 1px solid #e8e0d6;
+    border-radius: 14px;
+    box-shadow: 0 16px 40px rgba(29, 29, 22, 0.16);
+    max-height: 240px;
+    overflow-y: auto;
+  }
+  .custom-select-menu[hidden] {
+    display: none;
+  }
+  .custom-select-menu li {
+    padding: 11px 12px;
+    border-radius: 10px;
+    font-size: 0.94rem;
+    line-height: 1.35;
+    color: var(--color-dark);
+    cursor: pointer;
+  }
+  .custom-select-menu li:hover,
+  .custom-select-menu li.is-active {
+    background: var(--color-cream);
+  }
+  .custom-select-menu li[aria-selected='true'] {
+    background: rgba(189, 85, 78, 0.1);
+    color: var(--color-red);
+    font-weight: 600;
+  }
+  .custom-select-menu li[aria-selected='true'].is-active {
+    background: rgba(189, 85, 78, 0.16);
+  }
+
+  @media (max-width: 900px) {
+    .contact .title {
+      max-width: none;
+    }
+  }
 </style>
 
 <script>
   const form = document.getElementById('contactForm') as HTMLFormElement | null;
   const status = document.getElementById('formStatus');
+  const PLACEHOLDER = 'Selecciona una opción';
+
+  type SelectParts = {
+    root: HTMLElement;
+    input: HTMLInputElement;
+    trigger: HTMLButtonElement;
+    valueEl: HTMLElement;
+    menu: HTMLElement;
+    options: HTMLElement[];
+  };
+
+  const getParts = (root: HTMLElement): SelectParts | null => {
+    const input = root.querySelector<HTMLInputElement>('[data-select-input]');
+    const trigger = root.querySelector<HTMLButtonElement>('[data-select-trigger]');
+    const valueEl = root.querySelector<HTMLElement>('[data-select-value]');
+    const menu = root.querySelector<HTMLElement>('[data-select-menu]');
+    if (!input || !trigger || !valueEl || !menu) return null;
+    return {
+      root,
+      input,
+      trigger,
+      valueEl,
+      menu,
+      options: Array.from(menu.querySelectorAll<HTMLElement>('[role="option"]')),
+    };
+  };
+
+  const closeSelect = (parts: SelectParts) => {
+    parts.trigger.setAttribute('aria-expanded', 'false');
+    parts.menu.hidden = true;
+    parts.options.forEach((opt) => opt.classList.remove('is-active'));
+  };
+
+  const openSelect = (parts: SelectParts) => {
+    document.querySelectorAll<HTMLElement>('[data-custom-select]').forEach((other) => {
+      const otherParts = getParts(other);
+      if (otherParts && otherParts.root !== parts.root) closeSelect(otherParts);
+    });
+    parts.trigger.setAttribute('aria-expanded', 'true');
+    parts.menu.hidden = false;
+    const selected = parts.options.find((opt) => opt.getAttribute('aria-selected') === 'true') || parts.options[0];
+    selected?.classList.add('is-active');
+    selected?.focus();
+  };
+
+  const setValue = (parts: SelectParts, value: string) => {
+    parts.input.value = value;
+    parts.valueEl.textContent = value || PLACEHOLDER;
+    parts.trigger.classList.toggle('is-placeholder', !value);
+    parts.root.classList.remove('is-invalid');
+    parts.options.forEach((opt) => {
+      const selected = opt.dataset.value === value;
+      opt.setAttribute('aria-selected', String(selected));
+    });
+  };
+
+  const resetSelect = (parts: SelectParts) => {
+    setValue(parts, '');
+    closeSelect(parts);
+  };
+
+  form?.querySelectorAll<HTMLElement>('[data-custom-select]').forEach((root) => {
+    const parts = getParts(root);
+    if (!parts) return;
+
+    parts.trigger.addEventListener('click', () => {
+      const open = parts.trigger.getAttribute('aria-expanded') === 'true';
+      if (open) closeSelect(parts);
+      else openSelect(parts);
+    });
+
+    parts.trigger.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openSelect(parts);
+      }
+    });
+
+    parts.options.forEach((opt, index) => {
+      opt.addEventListener('click', () => {
+        setValue(parts, opt.dataset.value || '');
+        closeSelect(parts);
+        parts.trigger.focus();
+      });
+
+      opt.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          const next = parts.options[index + 1] || parts.options[0];
+          parts.options.forEach((o) => o.classList.remove('is-active'));
+          next.classList.add('is-active');
+          next.focus();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          const prev = parts.options[index - 1] || parts.options[parts.options.length - 1];
+          parts.options.forEach((o) => o.classList.remove('is-active'));
+          prev.classList.add('is-active');
+          prev.focus();
+        } else if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          setValue(parts, opt.dataset.value || '');
+          closeSelect(parts);
+          parts.trigger.focus();
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          closeSelect(parts);
+          parts.trigger.focus();
+        } else if (e.key === 'Tab') {
+          closeSelect(parts);
+        }
+      });
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!(e.target instanceof Element)) return;
+    if (e.target.closest('[data-custom-select]')) return;
+    document.querySelectorAll<HTMLElement>('[data-custom-select]').forEach((root) => {
+      const parts = getParts(root);
+      if (parts) closeSelect(parts);
+    });
+  });
 
   form?.addEventListener('submit', (e) => {
     e.preventDefault();
-    if (!form.checkValidity()) {
-      form.reportValidity();
+
+    let valid = form.checkValidity();
+    form.querySelectorAll<HTMLElement>('[data-custom-select]').forEach((root) => {
+      const parts = getParts(root);
+      if (!parts) return;
+      const empty = !parts.input.value;
+      parts.root.classList.toggle('is-invalid', empty);
+      if (empty) valid = false;
+    });
+
+    if (!valid) {
+      const firstInvalid =
+        form.querySelector<HTMLElement>('.custom-select.is-invalid [data-select-trigger]') ||
+        form.querySelector<HTMLElement>(':invalid');
+      firstInvalid?.focus();
       return;
     }
 
@@ -122,5 +371,9 @@ import { site, contactSection, timelineOptions, budgetOptions, paymentOptions } 
 
     if (status) status.textContent = 'Gracias, tu solicitud se abrió en WhatsApp para enviarla a un asesor.';
     form.reset();
+    form.querySelectorAll<HTMLElement>('[data-custom-select]').forEach((root) => {
+      const parts = getParts(root);
+      if (parts) resetSelect(parts);
+    });
   });
 </script>

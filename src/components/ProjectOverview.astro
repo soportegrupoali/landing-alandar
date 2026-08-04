@@ -10,6 +10,7 @@ import { project, stats } from '../data/content';
       <p class="eyebrow">{project.eyebrow}</p>
       <h2 class="title" id="proyecto-heading">{project.title}</h2>
       <p class="lede">{project.body}</p>
+      {project.closing && <p class="closing">{project.closing}</p>}
       <dl class="stats">
         {stats.map((s) => (
           <div class="stat">
@@ -32,35 +33,55 @@ import { project, stats } from '../data/content';
 </section>
 
 <style>
+  .section {
+    background: var(--color-cream);
+  }
+  .closing {
+    margin-top: 14px;
+    font-weight: 600;
+    color: var(--color-dark);
+    max-width: 48ch;
+    line-height: 1.55;
+  }
   .stats {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin: 24px 0 0;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin: 28px 0 0;
   }
   .stat {
     background: #fff;
     border-radius: var(--radius-md);
-    padding: 22px;
+    padding: clamp(16px, 2.5vw, 22px);
     box-shadow: var(--shadow-soft);
+    min-width: 0;
   }
   .stat dt {
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     color: #8a837b;
     margin-bottom: 9px;
+    line-height: 1.35;
   }
   .stat dd {
     margin: 0;
     font-family: var(--font-display);
     color: var(--color-red);
-    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-size: clamp(1.45rem, 2.8vw, 2.2rem);
+    line-height: 1.1;
+    word-break: break-word;
   }
 
   @media (max-width: 900px) {
     .stats {
       grid-template-columns: 1fr;
+    }
+  }
+
+  @media (min-width: 520px) and (max-width: 900px) {
+    .stats {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 </style>

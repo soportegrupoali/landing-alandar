@@ -10,9 +10,15 @@ seo:
     amenidades para vivir hacia afuera.
 
 contact:
-  phoneDisplay: "+52 999 000 0000"
-  phoneWhatsapp: "5219990000000"
-  email: ventas@alandarmerida.com
+  phoneDisplay: "999 518 8128"
+  phoneWhatsapp: "5219995188128"
+  email: ventas@grupoali.mx
+  address:
+    street: "Calle 51, #642 entre 72ª, Col Real Montejo"
+    locality: Mérida
+    region: Yucatán
+    postalCode: "9730"
+    country: MX
 
 hero:
   title: La tierra que conecta tus raíces con la vida moderna.
@@ -24,10 +30,13 @@ project:
   eyebrow: Alandar | Proyecto
   title: Un desarrollo planeado para vivir hacia afuera.
   body: >-
-    Vivir hacia afuera significa que la vida no se queda únicamente dentro
-    del lote: se extiende hacia parques, andadores, casa club, áreas verdes
-    y espacios comunes que invitan a caminar, convivir, ejercitarte y
-    disfrutar el entorno todos los días.
+    En Alandar, la privacidad de una comunidad residencial se fusiona con
+    una ubicación privilegiada al norte de Mérida y una planeación que
+    extiende tu estilo de vida más allá de tu hogar. Parques, andadores,
+    casa club y espacios de convivencia crean un entorno donde cada día
+    invita a caminar, compartir, convivir con tu familia y disfrutar la
+    naturaleza.
+  closing: La mejor calidad de vida se vive en un entorno que te invita a disfrutar cada día.
   stats:
     - label: Lotes residenciales
       value: "600"
@@ -40,9 +49,10 @@ masterPlan:
   eyebrow: Master plan
   title: Orden, naturaleza y comunidad en un mismo recorrido.
   body: >-
-    El diseño integra áreas verdes, parques, vialidades y amenidades para
-    conectar cada etapa con espacios de convivencia y bienestar. Explora los
-    puntos del mapa para conocer cada espacio.
+    El master plan integra vialidades amplias, parques temáticos y
+    amenidades distribuidas estratégicamente para que cada etapa tenga
+    cercanía con áreas de convivencia y bienestar. Explora los puntos del
+    mapa para conocer el proyecto.
   pins:
     - id: casa
       title: Casa Club
@@ -82,21 +92,22 @@ location:
   eyebrow: Ubicación cómoda y exclusiva
   title: Conecta con lo mejor de Mérida.
   body: >-
-    San Antonio Hool combina tranquilidad y excelente conectividad. Se
-    encuentra cerca del Periférico de Mérida y permite conectar con plazas,
-    universidades, servicios y la costa yucateca.
+    San Antonio Hool combina tranquilidad y conectividad. El proyecto se
+    ubica a minutos del periférico, plazas comerciales, universidades y
+    servicios esenciales; además mantiene una conexión práctica con la
+    costa yucateca.
   stats:
     - value: 8 min
-      label: al periférico
+      label: del periférico de Mérida.
     - value: 20 min
-      label: a la costa
+      label: del puerto de progreso y playas costeras.
     - value: A pasos
-      label: de servicios
+      label: de servicios, parques y comercios.
 
 amenities:
   eyebrow: Amenidades
   title: Espacios pensados para cada forma de vivir.
-  body: Una casa club y parques para activar, descansar, convivir y disfrutar todos los días.
+  body: Adquirir tu lote en Alandar te da acceso a la casa club con amenidades premium.
   items:
     - img: amenidad-1
       title: Alberca recreativa
@@ -122,14 +133,12 @@ amenities:
 
 cta:
   title: Conoce disponibilidad y precio actualizado.
-  body: >-
-    Un asesor puede compartirte lotes disponibles, ubicación dentro de la
-    etapa y plan de pago vigente.
+  body: Habla con un asesor para conocer lotes disponibles y opciones de financiamiento.
 
 progress:
   eyebrow: Avance de obra
   title: Un proyecto que avanza contigo.
-  body: Da seguimiento al progreso del desarrollo con material audiovisual actualizado del proyecto.
+  body: Conoce el progreso de Alandar y descubre cómo este proyecto continúa tomando forma, etapa a etapa.
   video:
     # provider: "local" usa el mp4 propio; "vimeo" incrusta el video de Vimeo.
     provider: local
@@ -139,32 +148,36 @@ progress:
 financing:
   eyebrow: Plan de financiamiento
   title: Opciones pensadas para facilitar tu inversión.
-  body: Planes sujetos a disponibilidad, vigencia y condiciones comerciales del proyecto.
+  body: >-
+    Con nuestros planes de financiamiento, invertir en Alandar es un
+    proceso simple, flexible y pensado para acercarte a tu próximo
+    patrimonio.
+  ctaLabel: Solicitar planes de financiamiento
   items:
-    - label: Apartado
-      value: $10 Mil
-      note: ""
     - label: Hasta
-      value: 36 MSI
+      value: 24 MSI
       note: ""
-    - label: Descuento
+    - label: "Descuento hasta:"
       value: 14%
-      note: "*Últimas 3 unidades seleccionadas"
+      note: "*últimas 3 unidades seleccionadas."
 
 quote:
   eyebrow: Cotizador
   title: Genera tu cotización.
   body: >-
-    Cambia entre el master plan y la etapa 1 para ver una vista de
-    cotización por lote. Esta sección queda lista para conectarse a
-    inventario real.
+    Actualmente se comercializa la 1.ª etapa en preventa. Elige el lote
+    que mejor se adapte a ti y un plan de financiamiento (Plan 10, 15 o 20).
+    Define el porcentaje de enganche —según el plan, puedes diferirlo a
+    3 meses— y la contraentrega.
+  ctaLabel: Solicitar asesoría
+  iframeUrl: https://desarrollosali.com/sistemas_active/crm/if/index.php?id=2v7OUgTho0D134
 
 gallery:
   eyebrow: Galería
-  title: Una experiencia visual de naturaleza, arquitectura y comunidad.
+  title: Naturaleza, arquitectura y comunidad en un mismo lugar.
   body: >-
-    Explora renders y perspectivas del desarrollo. Da clic en cualquier
-    imagen para verla en grande.
+    Explora cada perspectiva y descubre cómo la arquitectura, la
+    naturaleza y el diseño se integran en Alandar.
 
 contactSection:
   eyebrow: Contacto
@@ -179,3 +192,8 @@ footer:
   legal: >-
     Renders, avances de obra y planes de financiamiento sujetos a
     disponibilidad y cambio sin previo aviso.
+  legalLinks:
+    - label: Aviso de privacidad
+      href: /aviso-de-privacidad
+    - label: Términos y condiciones
+      href: /terminos-y-condiciones

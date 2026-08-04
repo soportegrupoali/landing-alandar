@@ -35,6 +35,15 @@ collections:
               - { label: "Teléfono (texto visible)", name: phoneDisplay, widget: string }
               - { label: "WhatsApp (solo números, con código de país, ej. 5219991234567)", name: phoneWhatsapp, widget: string, pattern: ['^[0-9]{10,15}$', "Solo números, sin +, espacios ni guiones"] }
               - { label: Correo, name: email, widget: string }
+              - label: Dirección
+                name: address
+                widget: object
+                fields:
+                  - { label: Calle y número, name: street, widget: string }
+                  - { label: Ciudad, name: locality, widget: string }
+                  - { label: Estado, name: region, widget: string }
+                  - { label: "Código postal", name: postalCode, widget: string }
+                  - { label: "País (código ISO, ej. MX)", name: country, widget: string }
 
           - label: Hero (portada)
             name: hero
@@ -50,6 +59,7 @@ collections:
               - { label: Eyebrow (texto pequeño superior), name: eyebrow, widget: string }
               - { label: Título, name: title, widget: string }
               - { label: Párrafo, name: body, widget: text }
+              - { label: "Frase de cierre (opcional)", name: closing, widget: string, required: false }
               - label: Estadísticas
                 name: stats
                 widget: list
@@ -135,6 +145,7 @@ collections:
               - { label: Eyebrow, name: eyebrow, widget: string }
               - { label: Título, name: title, widget: string }
               - { label: Párrafo, name: body, widget: text }
+              - { label: "Texto del botón", name: ctaLabel, widget: string, required: false }
               - label: Tarjetas
                 name: items
                 widget: list
@@ -150,6 +161,8 @@ collections:
               - { label: Eyebrow, name: eyebrow, widget: string }
               - { label: Título, name: title, widget: string }
               - { label: Párrafo, name: body, widget: text }
+              - { label: "Texto del botón", name: ctaLabel, widget: string, required: false }
+              - { label: "URL del iframe de Manivela (cotizador)", name: iframeUrl, widget: string, required: false }
 
           - label: "Sección: Galería"
             name: gallery
@@ -173,3 +186,9 @@ collections:
             fields:
               - { label: Descripción, name: description, widget: text }
               - { label: Texto legal, name: legal, widget: text }
+              - label: "Links legales (Aviso de privacidad, Términos, etc.)"
+                name: legalLinks
+                widget: list
+                fields:
+                  - { label: Texto, name: label, widget: string }
+                  - { label: "Ruta (ej. /aviso-de-privacidad)", name: href, widget: string }

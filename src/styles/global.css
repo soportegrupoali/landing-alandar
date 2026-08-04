@@ -66,14 +66,16 @@ h2,
 h3 {
   font-family: var(--font-display);
   font-weight: 400;
-  line-height: 0.98;
+  line-height: 1.08;
   margin: 0;
+  text-wrap: balance;
 }
 
 p {
   line-height: 1.7;
   color: var(--color-ink-soft);
   margin: 0;
+  text-wrap: pretty;
 }
 
 a {
@@ -82,6 +84,7 @@ a {
 
 img {
   max-width: 100%;
+  height: auto;
   display: block;
 }
 
@@ -104,14 +107,125 @@ img {
 }
 
 .title {
-  font-size: clamp(2.1rem, 4.6vw, 4.2rem);
+  font-size: clamp(1.85rem, 4.2vw, 3.75rem);
   letter-spacing: -0.02em;
+  line-height: 1.08;
+  max-width: 18ch;
 }
 
 .lede {
-  font-size: clamp(1rem, 1.1vw, 1.125rem);
+  font-size: clamp(0.98rem, 1.05vw, 1.125rem);
   max-width: 54ch;
-  margin-top: 18px;
+  margin-top: 16px;
+}
+
+/* Campos de formulario (cross-browser) */
+.field {
+  margin-bottom: 12px;
+}
+
+.field-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-ink-soft);
+  margin-bottom: 6px;
+}
+
+.field-control,
+.field input,
+.field select,
+.field textarea,
+.modal input,
+.modal textarea,
+.modal select {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  border: 1px solid #e4ddd5;
+  border-radius: 11px;
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  color: var(--color-dark);
+  background-color: #fff;
+  box-shadow: none;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.field textarea,
+.modal textarea {
+  min-height: 95px;
+  resize: vertical;
+  padding-top: 12px;
+}
+
+.field select,
+.modal select {
+  padding-right: 44px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%23686868' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px;
+  cursor: pointer;
+}
+
+.field select::-ms-expand,
+.modal select::-ms-expand {
+  display: none;
+}
+
+.field select:invalid,
+.field select.is-placeholder,
+.modal select:invalid,
+.modal select.is-placeholder {
+  color: #9a948c;
+}
+
+.field select option,
+.modal select option {
+  color: var(--color-dark);
+}
+
+.field input::placeholder,
+.field textarea::placeholder,
+.modal input::placeholder,
+.modal textarea::placeholder {
+  color: #9a948c;
+  opacity: 1;
+}
+
+.field input:hover,
+.field select:hover,
+.field textarea:hover,
+.modal input:hover,
+.modal textarea:hover,
+.modal select:hover {
+  border-color: #d2c8bc;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus,
+.modal input:focus,
+.modal textarea:focus,
+.modal select:focus {
+  border-color: var(--color-red);
+  box-shadow: 0 0 0 3px rgba(189, 85, 78, 0.18);
+}
+
+.field input:focus-visible,
+.field select:focus-visible,
+.field textarea:focus-visible,
+.modal input:focus-visible,
+.modal textarea:focus-visible,
+.modal select:focus-visible {
+  outline: none;
 }
 
 /* Botones */
@@ -199,6 +313,21 @@ img {
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-lift);
+  aspect-ratio: 16 / 9;
+  background: #e8e0d6;
+}
+
+.card-img :is(picture) {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.card-img :is(img, picture img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 /* Revelado al hacer scroll */
@@ -221,8 +350,16 @@ img {
 @media (max-width: 900px) {
   .grid-2 {
     grid-template-columns: 1fr;
+    gap: 28px;
   }
   .section {
     padding-block: clamp(48px, 12vw, 68px);
+  }
+  .title {
+    max-width: none;
+    font-size: clamp(1.75rem, 7.2vw, 2.4rem);
+  }
+  main .btn {
+    width: 100%;
   }
 }

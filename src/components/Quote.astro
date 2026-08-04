@@ -1,36 +1,30 @@
 ---
-import { getImage } from 'astro:assets';
-import quoteMaster from '../assets/img/quote-master.png';
-import quoteEtapa1 from '../assets/img/quote-etapa1.png';
 import { quote } from '../data/content';
-
-const masterImg = await getImage({ src: quoteMaster, width: 900, format: 'webp' });
-const etapa1Img = await getImage({ src: quoteEtapa1, width: 900, format: 'webp' });
 ---
 
 <section class="section quote" id="cotizador" aria-labelledby="quote-heading">
-  <div class="wrap grid-2">
-    <div class="quote-img" data-reveal>
-      <div class="quote-tabs" role="tablist" aria-label="Vista del cotizador">
-        <button role="tab" id="tabMaster" aria-selected="true" aria-controls="panelQuote" class="quote-tab active" data-view="master">
-          Master plan
-        </button>
-        <button role="tab" id="tabEtapa1" aria-selected="false" aria-controls="panelQuote" class="quote-tab" data-view="etapa1">
-          Etapa 1
-        </button>
-      </div>
-      <div id="panelQuote" role="tabpanel">
-        <img id="quoteImg" src={masterImg.src} data-master={masterImg.src} data-etapa1={etapa1Img.src} alt="Plano de cotización de Alandar por lote, vista master plan" loading="lazy" />
-      </div>
-    </div>
-    <div data-reveal>
+  <div class="wrap">
+    <div class="quote-copy" data-reveal>
       <p class="eyebrow">{quote.eyebrow}</p>
       <h2 class="title" id="quote-heading">{quote.title}</h2>
       <p class="lede">{quote.body}</p>
-      <div class="quote-actions">
-        <a class="btn btn-red" href="#contacto">Solicitar cotización con un asesor</a>
-      </div>
+      {quote.ctaLabel && (
+        <div class="quote-actions">
+          <a class="btn btn-red" href="#contacto">{quote.ctaLabel}</a>
+        </div>
+      )}
     </div>
+
+    {quote.iframeUrl && (
+      <div class="quote-frame" data-reveal>
+        <iframe
+          src={quote.iframeUrl}
+          title="Cotizador de lotes Alandar"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        />
+      </div>
+    )}
   </div>
 </section>
 
@@ -38,61 +32,44 @@ const etapa1Img = await getImage({ src: quoteEtapa1, width: 900, format: 'webp' 
   .quote {
     background: #f0dfd0;
   }
-  .quote-img img {
-    width: 100%;
-    height: auto;
-    max-height: 520px;
-    object-fit: contain;
-    border-radius: 18px;
-    display: block;
-    background: #fff;
+  .quote-copy {
+    max-width: 40rem;
+    margin-inline: auto;
+    text-align: center;
   }
-  .quote-tabs {
-    display: inline-flex;
-    gap: 6px;
-    background: rgba(255, 255, 255, 0.6);
-    padding: 6px;
-    border-radius: 999px;
-    margin-bottom: 14px;
+  .quote-copy .title {
+    max-width: none;
+    margin-inline: auto;
   }
-  .quote-tab {
-    border: 0;
-    background: transparent;
-    padding: 9px 18px;
-    border-radius: 999px;
-    font-weight: 700;
-    font-size: 0.85rem;
-    cursor: pointer;
-    color: var(--color-dark);
-  }
-  .quote-tab.active {
-    background: var(--color-red);
-    color: #fff;
+  .quote-copy .lede {
+    margin-inline: auto;
   }
   .quote-actions {
     margin-top: 22px;
+    display: flex;
+    justify-content: center;
+  }
+  .quote-frame {
+    margin-top: clamp(28px, 5vw, 44px);
+    box-shadow: var(--shadow-lift);
+    background: #fff;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .quote-frame iframe {
+    display: block;
+    width: 100%;
+    height: clamp(640px, 120vw, 1000px);
+    border: 0;
+    background: #fff;
+  }
+
+  @media (max-width: 900px) {
+    .quote-frame iframe {
+      height: min(920px, 160vw);
+    }
+    .quote-actions .btn {
+      width: 100%;
+    }
   }
 </style>
-
-<script>
-  const img = document.getElementById('quoteImg') as HTMLImageElement | null;
-  const tabs = document.querySelectorAll<HTMLButtonElement>('.quote-tab');
-
-  tabs.forEach((tab) => {
-    tab.addEventListener('click', () => {
-      tabs.forEach((t) => {
-        t.classList.toggle('active', t === tab);
-        t.setAttribute('aria-selected', String(t === tab));
-      });
-      if (img) {
-        const view = tab.dataset.view;
-        const next = view === 'etapa1' ? img.dataset.etapa1 : img.dataset.master;
-        if (next) img.src = next;
-        img.alt =
-          view === 'etapa1'
-            ? 'Plano de cotización de Alandar por lote, vista etapa 1'
-            : 'Plano de cotización de Alandar por lote, vista master plan';
-      }
-    });
-  });
-</script>

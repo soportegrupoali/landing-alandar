@@ -1,0 +1,28 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { site } from '../data/content';
+---
+
+<Layout title={`Términos y condiciones | ${site.name}`} description="Términos y condiciones de Alandar Paseo Residencial.">
+  <section class="section legal-page">
+    <div class="wrap">
+      <h1 class="title">Términos y condiciones</h1>
+      <p class="lede">
+        Este texto de términos y condiciones está en preparación. Para cualquier duda, escríbenos a{' '}
+        <a href={`mailto:${site.email}`}>{site.email}</a> o llámanos al{' '}
+        <a href={`tel:${site.phoneDisplay.replace(/\s/g, '')}`}>{site.phoneDisplay}</a>.
+      </p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .legal-page {
+    padding-top: 140px;
+    min-height: 50vh;
+  }
+  .legal-page .lede {
+    margin-top: 18px;
+    max-width: 60ch;
+  }
+</style>

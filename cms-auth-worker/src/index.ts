@@ -1,41 +1,45 @@
 /**
- * Worker de autenticación OAuth para Decap CMS (backend "github").
+ * Worker de autenticación para Decap CMS (backend "github"), basado en
+ * Cloudflare Access como capa de usuarios en vez de OAuth por-persona.
  *
- * Implementa el flujo estándar que Decap CMS espera de un proveedor OAuth
- * (el mismo protocolo que netlify-cms-oauth-provider / decap-cms-oauth-provider):
+ * Modelo:
+ *   - Cloudflare Access protege este Worker Y /admin del sitio principal a
+ *     nivel de borde (edge): una petición que no pasó por Access nunca
+ *     llega ni siquiera a este código. Danny administra quién entra
+ *     agregando/quitando correos en el dashboard de Cloudflare Zero Trust
+ *     — sin tocar código ni GitHub.
+ *   - Este Worker vuelve a verificar el JWT de Access (defensa en
+ *     profundidad: nunca confiar ciegamente en "llegó hasta aquí" como
+ *     prueba de autenticación) y, si es válido, le entrega a Decap CMS un
+ *     token de GitHub COMPARTIDO (un fine-grained Personal Access Token con
+ *     permisos solo sobre este repo) para que pueda leer/escribir contenido.
+ *   - Los commits de quienes entran por este camino quedan bajo la
+ *     identidad del token compartido, no la de cada persona — el registro
+ *     de "quién entró y cuándo" vive en los logs de Cloudflare Access, no
+ *     en git.
  *
- *   1. GET /auth      -> redirige a GitHub para que el usuario autorice la app.
- *   2. GET /callback  -> GitHub redirige aquí con un `code`; lo cambiamos por
- *                        un access_token (usando el client secret, que solo
- *                        vive en este Worker) y se lo pasamos de vuelta a la
- *                        ventana del CMS vía window.postMessage.
+ * Protocolo con Decap CMS: igual que un OAuth provider normal (ver
+ * https://decapcms.org/docs/external-oauth-clients/) — el CMS abre este
+ * endpoint en un popup y espera un window.postMessage con
+ * "authorization:github:success:{...}".
  *
- * El client secret NUNCA se expone al navegador: todo el intercambio
- * code -> token ocurre server-side, aquí.
- *
- * Variables de entorno esperadas (ver wrangler.jsonc / `wrangler secret put`):
- *   - GITHUB_CLIENT_ID      (pública, va en wrangler.jsonc)
- *   - GITHUB_CLIENT_SECRET  (secreta, NUNCA en el repo -> `wrangler secret put`)
- *   - ALLOWED_REPO          (ej. "soportegrupoali/landing-alandar", solo informativo/log)
+ * Variables de entorno esperadas:
+ *   - CF_ACCESS_TEAM_DOMAIN  (pública, ej. "soportegrupoali.cloudflareaccess.com")
+ *   - CF_ACCESS_AUD          (pública, el "Application Audience (AUD) Tag" de la Access App)
+ *   - GITHUB_SHARED_TOKEN    (secreta, NUNCA en el repo -> `wrangler secret put`)
+ *   - ALLOWED_REPO           (informativo, ej. "soportegrupoali/landing-alandar")
  */
 
+import { createRemoteJWKSet, jwtVerify } from 'jose';
+
 export interface Env {
-  GITHUB_CLIENT_ID: string;
-  GITHUB_CLIENT_SECRET: string;
+  CF_ACCESS_TEAM_DOMAIN: string;
+  CF_ACCESS_AUD: string;
+  GITHUB_SHARED_TOKEN: string;
   ALLOWED_REPO?: string;
 }
 
-const GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize';
-const GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token';
-const STATE_COOKIE = 'decap_oauth_state';
-
-function randomState(): string {
-  return crypto.randomUUID();
-}
-
-function htmlEscape(value: string): string {
-  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
+const ACCESS_JWT_HEADER = 'Cf-Access-Jwt-Assertion';
 
 /** Evita que el JSON embebido en el <script> pueda cerrar la etiqueta. */
 function safeJsonForScript(value: unknown): string {
@@ -63,6 +67,30 @@ function renderCallbackPage(status: 'success' | 'error', payload: Record<string,
 </html>`;
 }
 
+// El JWKS se cachea automáticamente en memoria por `jose` entre invocaciones
+// del mismo Worker isolate.
+let jwks: ReturnType<typeof createRemoteJWKSet> | undefined;
+
+async function verifyAccessJwt(request: Request, env: Env): Promise<{ email: string } | null> {
+  const token = request.headers.get(ACCESS_JWT_HEADER);
+  if (!token || !env.CF_ACCESS_TEAM_DOMAIN || !env.CF_ACCESS_AUD) return null;
+
+  if (!jwks) {
+    jwks = createRemoteJWKSet(new URL(`https://${env.CF_ACCESS_TEAM_DOMAIN}/cdn-cgi/access/certs`));
+  }
+
+  try {
+    const { payload } = await jwtVerify(token, jwks, {
+      issuer: `https://${env.CF_ACCESS_TEAM_DOMAIN}`,
+      audience: env.CF_ACCESS_AUD,
+    });
+    const email = typeof payload.email === 'string' ? payload.email : null;
+    return email ? { email } : null;
+  } catch {
+    return null;
+  }
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
@@ -72,84 +100,33 @@ export default {
       if (provider !== 'github') {
         return new Response('Unsupported provider', { status: 400 });
       }
-      if (!env.GITHUB_CLIENT_ID) {
-        return new Response('Worker mal configurado: falta GITHUB_CLIENT_ID', { status: 500 });
+      if (!env.GITHUB_SHARED_TOKEN) {
+        return new Response('Worker mal configurado: falta GITHUB_SHARED_TOKEN', { status: 500 });
       }
 
-      const state = randomState();
-      const redirectUri = `${url.origin}/callback`;
-      const authorizeUrl = new URL(GITHUB_AUTHORIZE_URL);
-      authorizeUrl.searchParams.set('client_id', env.GITHUB_CLIENT_ID);
-      authorizeUrl.searchParams.set('redirect_uri', redirectUri);
-      authorizeUrl.searchParams.set('scope', url.searchParams.get('scope') || 'repo,user');
-      authorizeUrl.searchParams.set('state', state);
-
-      return new Response(null, {
-        status: 302,
-        headers: {
-          Location: authorizeUrl.toString(),
-          // httpOnly + secure + short-lived: solo sirve para validar el
-          // `state` que regresa GitHub en /callback (protección CSRF).
-          'Set-Cookie': `${STATE_COOKIE}=${state}; Path=/callback; Max-Age=600; HttpOnly; Secure; SameSite=Lax`,
-          // Cada visita a /auth debe generar un state nuevo: nunca cachear.
-          'Cache-Control': 'no-store',
-        },
-      });
-    }
-
-    if (url.pathname === '/callback') {
-      const code = url.searchParams.get('code');
-      const returnedState = url.searchParams.get('state');
-      const cookieHeader = request.headers.get('Cookie') || '';
-      const cookieState = cookieHeader
-        .split(';')
-        .map((c) => c.trim())
-        .find((c) => c.startsWith(`${STATE_COOKIE}=`))
-        ?.slice(STATE_COOKIE.length + 1);
-
-      if (!code) {
-        return new Response('Falta "code" en el callback de GitHub', { status: 400 });
-      }
-      if (!returnedState || !cookieState || returnedState !== cookieState) {
-        return new Response('El parámetro "state" no coincide (posible CSRF). Intenta iniciar sesión de nuevo.', {
-          status: 400,
-        });
-      }
-
-      const tokenResponse = await fetch(GITHUB_TOKEN_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          client_id: env.GITHUB_CLIENT_ID,
-          client_secret: env.GITHUB_CLIENT_SECRET,
-          code,
-          redirect_uri: `${url.origin}/callback`,
-        }),
-      });
-
-      const tokenData = (await tokenResponse.json()) as {
-        access_token?: string;
-        error?: string;
-        error_description?: string;
-      };
-
+      const identity = await verifyAccessJwt(request, env);
       const headers = { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' };
 
-      if (!tokenResponse.ok || !tokenData.access_token) {
-        const errorMessage = tokenData.error_description || tokenData.error || 'No se pudo obtener el token';
-        return new Response(renderCallbackPage('error', { message: htmlEscape(errorMessage) }), {
-          status: 400,
-          headers,
-        });
+      if (!identity) {
+        // No debería pasar en condiciones normales: Access ya filtró la
+        // petición antes de que llegara aquí. Si esto se dispara, algo en
+        // la configuración de Access está mal (dominio/AUD equivocados, o
+        // la Access Application no está protegiendo esta ruta).
+        return new Response(
+          renderCallbackPage('error', {
+            message: 'No se pudo verificar tu sesión de Cloudflare Access. Intenta de nuevo o avisa a soporte.ti@grupoali.mx.',
+          }),
+          { status: 401, headers }
+        );
       }
 
       return new Response(
-        renderCallbackPage('success', { token: tokenData.access_token, provider: 'github' }),
+        renderCallbackPage('success', { token: env.GITHUB_SHARED_TOKEN, provider: 'github' }),
         { headers }
       );
     }
 
-    return new Response('Worker de autenticación de Decap CMS para landing-alandar. Rutas: /auth, /callback', {
+    return new Response('Worker de autenticación de Decap CMS para landing-alandar. Ruta: /auth', {
       status: 200,
     });
   },

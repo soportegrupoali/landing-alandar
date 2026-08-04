@@ -4,6 +4,7 @@ import logo from '../assets/img/logo-alandar-blanco.png';
 import { site, nav, footerContent } from '../data/content';
 
 const year = new Date().getFullYear();
+const navRows = Math.ceil(nav.length / 2);
 ---
 
 <footer class="footer">
@@ -13,21 +14,37 @@ const year = new Date().getFullYear();
       <p class="footer-desc">{footerContent.description}</p>
     </div>
 
-    <nav aria-label="Enlaces del sitio">
-      <h2 class="footer-heading">Explorar</h2>
-      <ul class="footer-list">
-        {nav.map((item) => (
-          <li><a href={item.href}>{item.label}</a></li>
-        ))}
-      </ul>
-    </nav>
+    <div class="footer-explore">
+      <nav aria-label="Enlaces del sitio">
+        <h2 class="footer-heading">Explorar</h2>
+        <ul class="footer-list two-col" style={`--rows:${navRows}`}>
+          {nav.map((item) => (
+            <li><a href={item.href}>{item.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      {footerContent.legalLinks?.length > 0 && (
+        <nav aria-label="Legal" class="footer-legal-nav">
+          <h2 class="footer-heading">Legal</h2>
+          <ul class="footer-list">
+            {footerContent.legalLinks.map((item) => (
+              <li><a href={item.href}>{item.label}</a></li>
+            ))}
+          </ul>
+        </nav>
+      )}
+    </div>
 
     <div>
       <h2 class="footer-heading">Contacto</h2>
       <ul class="footer-list">
         <li><a href={`tel:${site.phoneDisplay.replace(/\s/g, '')}`}>{site.phoneDisplay}</a></li>
         <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
-        <li>{site.address.locality}, {site.address.region}, México</li>
+        <li>
+          {site.address.street},<br />
+          {site.address.locality}, {site.address.region}, C.P. {site.address.postalCode}
+        </li>
       </ul>
     </div>
   </div>
@@ -67,6 +84,10 @@ const year = new Date().getFullYear();
     color: #fff;
     margin-bottom: 16px;
   }
+  .footer-explore {
+    display: grid;
+    gap: 32px;
+  }
   .footer-list {
     list-style: none;
     padding: 0;
@@ -74,6 +95,11 @@ const year = new Date().getFullYear();
     display: grid;
     gap: 10px;
     font-size: 0.9rem;
+  }
+  .footer-list.two-col {
+    grid-template-rows: repeat(var(--rows), auto);
+    grid-auto-flow: column;
+    column-gap: 24px;
   }
   .footer-list a {
     text-decoration: none;
@@ -106,6 +132,24 @@ const year = new Date().getFullYear();
     .footer-grid {
       grid-template-columns: 1fr;
       gap: 32px;
+    }
+    .footer-list.two-col {
+      grid-template-rows: none;
+      grid-auto-flow: row;
+      grid-template-columns: 1fr 1fr;
+    }
+    .footer-bottom {
+      flex-direction: column;
+      gap: 12px;
+    }
+    .footer-legal {
+      max-width: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .footer-list.two-col {
+      grid-template-columns: 1fr;
     }
   }
 </style>
