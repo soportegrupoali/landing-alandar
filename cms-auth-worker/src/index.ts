@@ -91,6 +91,8 @@ export default {
           // httpOnly + secure + short-lived: solo sirve para validar el
           // `state` que regresa GitHub en /callback (protección CSRF).
           'Set-Cookie': `${STATE_COOKIE}=${state}; Path=/callback; Max-Age=600; HttpOnly; Secure; SameSite=Lax`,
+          // Cada visita a /auth debe generar un state nuevo: nunca cachear.
+          'Cache-Control': 'no-store',
         },
       });
     }
@@ -131,7 +133,7 @@ export default {
         error_description?: string;
       };
 
-      const headers = { 'Content-Type': 'text/html; charset=utf-8' };
+      const headers = { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' };
 
       if (!tokenResponse.ok || !tokenData.access_token) {
         const errorMessage = tokenData.error_description || tokenData.error || 'No se pudo obtener el token';

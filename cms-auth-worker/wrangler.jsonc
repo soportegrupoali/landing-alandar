@@ -6,7 +6,7 @@
   "vars": {
     // Público (no es secreto): Client ID de la GitHub OAuth App.
     // Lo da GitHub al crear la app en Settings > Developer settings > OAuth Apps.
-    "GITHUB_CLIENT_ID": "PENDIENTE_DE_CONFIGURAR",
+    "GITHUB_CLIENT_ID": "Ov23lixvbaV4AFOJLE9N",
     "ALLOWED_REPO": "soportegrupoali/landing-alandar"
   }
   // GITHUB_CLIENT_SECRET NO va aquí (este archivo se sube a git).
