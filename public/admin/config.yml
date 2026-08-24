@@ -51,6 +51,12 @@ collections:
             fields:
               - { label: Título, name: title, widget: string }
               - { label: Subtítulo, name: subtitle, widget: text }
+              - label: Video de fondo
+                name: video
+                widget: object
+                required: false
+                fields:
+                  - { label: "ID del video de Vimeo (ej. vimeo.com/1219695543 → 1219695543). Deja vacío para solo imagen.", name: vimeoId, widget: string, required: false }
 
           - label: "Sección: Proyecto"
             name: project

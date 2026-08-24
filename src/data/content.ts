@@ -26,7 +26,11 @@ export const site = {
   },
 } as const;
 
-export const hero = raw.hero as { title: string; subtitle: string };
+export const hero = raw.hero as {
+  title: string;
+  subtitle: string;
+  video?: { vimeoId?: string };
+};
 
 export const nav = [
   { href: '#proyecto', label: 'Proyecto' },

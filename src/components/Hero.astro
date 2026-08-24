@@ -3,18 +3,37 @@ import { Image } from 'astro:assets';
 import heroImg from '../assets/img/hero.webp';
 import motifs from '../assets/img/iconos-circulares-blancos.png';
 import { hero } from '../data/content';
+
+const vimeoId = hero.video?.vimeoId?.trim() ?? '';
+const hasVimeo = vimeoId !== '';
+// background=1: autoplay + mute + loop + sin UI (requiere plan Starter+ en Vimeo).
+// autopause=0: no pausar si hay otro player en la página. dnt=1: sin tracking cookies.
+const vimeoSrc = hasVimeo
+  ? `https://player.vimeo.com/video/${vimeoId}?background=1&autoplay=1&muted=1&loop=1&autopause=0&title=0&byline=0&portrait=0&dnt=1`
+  : '';
 ---
 
-<section class="hero" id="inicio">
-  <Image
-    src={heroImg}
-    alt="Vista nocturna de la casa club de Alandar Paseo Residencial rodeada de vegetación"
-    class="hero-bg"
-    widths={[640, 1024, 1600, 2200]}
-    sizes="100vw"
-    loading="eager"
-    fetchpriority="high"
-  />
+<section class="hero" id="inicio" data-hero-video={hasVimeo ? 'vimeo' : undefined}>
+  <div class="hero-media" aria-hidden="true">
+    <Image
+      src={heroImg}
+      alt="Vista nocturna de la casa club de Alandar Paseo Residencial rodeada de vegetación"
+      class="hero-poster"
+      widths={[640, 1024, 1600, 2200]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+    />
+    {
+      hasVimeo && (
+        <div
+          class="hero-video"
+          data-vimeo-src={vimeoSrc}
+          data-vimeo-title="Video de presentación de Alandar Paseo Residencial"
+        ></div>
+      )
+    }
+  </div>
   <div class="hero-scrim" aria-hidden="true"></div>
   <div class="wrap">
     <div class="content">
@@ -37,16 +56,43 @@ import { hero } from '../data/content';
     align-items: center;
     color: #fff;
     isolation: isolate;
+    overflow: hidden;
     padding-block: clamp(96px, 14vw, 120px) clamp(48px, 8vw, 80px);
   }
-  .hero-bg {
+  .hero-media {
     position: absolute;
     inset: 0;
     z-index: -2;
+  }
+  .hero-poster {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center;
+  }
+  .hero-video {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    pointer-events: none;
+  }
+  .hero-video.is-ready {
+    opacity: 1;
+  }
+  .hero-video :global(iframe) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100vw;
+    height: 56.25vw; /* 16:9 */
+    min-height: 100%;
+    min-width: 177.78vh; /* 16:9 cover */
+    border: 0;
+    transform: translate(-50%, -50%);
   }
   .hero-scrim {
     position: absolute;
@@ -96,4 +142,110 @@ import { hero } from '../data/content';
       align-items: stretch;
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-video {
+      display: none;
+    }
+  }
 </style>
+
+<script>
+  const hero = document.getElementById('inicio');
+  const mount = hero?.querySelector('.hero-video');
+
+  if (hero instanceof HTMLElement && mount instanceof HTMLElement) {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const src = mount.dataset.vimeoSrc;
+
+    if (src && !reduceMotion.matches) {
+      /** @type {HTMLIFrameElement | null} */
+      let iframe = null;
+      let ready = false;
+
+      const post = (/** @type {'play' | 'pause'} */ method) => {
+        iframe?.contentWindow?.postMessage(JSON.stringify({ method }), 'https://player.vimeo.com');
+      };
+
+      const loadPlayer = () => {
+        if (iframe) return;
+
+        iframe = document.createElement('iframe');
+        iframe.src = src;
+        iframe.title = mount.dataset.vimeoTitle || 'Video de fondo';
+        iframe.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture');
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+        iframe.tabIndex = -1;
+        mount.appendChild(iframe);
+
+        const reveal = () => {
+          if (ready) return;
+          ready = true;
+          mount.classList.add('is-ready');
+        };
+
+        const onMessage = (/** @type {MessageEvent} */ event) => {
+          if (event.origin !== 'https://player.vimeo.com') return;
+          let data = null;
+          try {
+            data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+          } catch {
+            return;
+          }
+          if (data?.event === 'ready') {
+            for (const value of ['play', 'playing', 'timeupdate']) {
+              iframe?.contentWindow?.postMessage(
+                JSON.stringify({ method: 'addEventListener', value }),
+                'https://player.vimeo.com'
+              );
+            }
+          }
+          if (data?.event === 'play' || data?.event === 'playing' || data?.event === 'timeupdate') {
+            reveal();
+            window.removeEventListener('message', onMessage);
+          }
+        };
+        window.addEventListener('message', onMessage);
+        window.setTimeout(reveal, 2500);
+      };
+
+      const scheduleLoad = () => {
+        if ('requestIdleCallback' in window) {
+          window.requestIdleCallback(loadPlayer, { timeout: 1800 });
+        } else {
+          window.setTimeout(loadPlayer, 400);
+        }
+      };
+
+      // Tras el load: el poster sigue siendo el candidato LCP.
+      if (document.readyState === 'complete') {
+        scheduleLoad();
+      } else {
+        window.addEventListener('load', scheduleLoad, { once: true });
+      }
+
+      const io = new IntersectionObserver(
+        ([entry]) => {
+          if (!iframe) return;
+          if (entry.isIntersecting) post('play');
+          else post('pause');
+        },
+        { threshold: 0.2 }
+      );
+      io.observe(hero);
+
+      reduceMotion.addEventListener('change', (event) => {
+        if (event.matches) {
+          post('pause');
+          mount.classList.remove('is-ready');
+          iframe?.remove();
+          iframe = null;
+          ready = false;
+        } else {
+          scheduleLoad();
+        }
+      });
+    }
+  }
+</script>

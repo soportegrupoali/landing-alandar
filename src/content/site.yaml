@@ -25,6 +25,10 @@ hero:
   subtitle: >-
     Privada residencial con casa club, áreas verdes, parques y espacios
     pensados para vivir con tranquilidad, comunidad y bienestar.
+  video:
+    # ID numérico de Vimeo (ej. vimeo.com/1219695543 → 1219695543).
+    # Requiere plan Starter+ en Vimeo para modo background (sin controles).
+    vimeoId: "1219695543"
 
 project:
   eyebrow: Alandar | Proyecto
