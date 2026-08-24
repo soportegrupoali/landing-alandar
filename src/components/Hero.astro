@@ -6,10 +6,10 @@ import { hero } from '../data/content';
 
 const vimeoId = hero.video?.vimeoId?.trim() ?? '';
 const hasVimeo = vimeoId !== '';
-// background=1: autoplay + mute + loop + sin UI (requiere plan Starter+ en Vimeo).
-// autopause=0: no pausar si hay otro player en la página. dnt=1: sin tracking cookies.
+// La cuenta de este video es Basic: background=1 y controls=0 son de pago y
+// provocan 403. Autoplay + mute + loop sí están disponibles en todos los planes.
 const vimeoSrc = hasVimeo
-  ? `https://player.vimeo.com/video/${vimeoId}?background=1&autoplay=1&muted=1&loop=1&autopause=0&title=0&byline=0&portrait=0&dnt=1`
+  ? `https://player.vimeo.com/video/${vimeoId}?autoplay=1&muted=1&loop=1&autopause=0&title=0&byline=0&portrait=0&dnt=1&playsinline=1`
   : '';
 ---
 
@@ -26,11 +26,15 @@ const vimeoSrc = hasVimeo
     />
     {
       hasVimeo && (
-        <div
+        <iframe
           class="hero-video"
-          data-vimeo-src={vimeoSrc}
-          data-vimeo-title="Video de presentación de Alandar Paseo Residencial"
-        ></div>
+          src={vimeoSrc}
+          title="Video de presentación de Alandar Paseo Residencial"
+          allow="autoplay; fullscreen; picture-in-picture"
+          referrerpolicy="strict-origin-when-cross-origin"
+          loading="eager"
+          tabindex="-1"
+        />
       )
     }
   </div>
@@ -63,36 +67,39 @@ const vimeoSrc = hasVimeo
     position: absolute;
     inset: 0;
     z-index: -2;
+    overflow: hidden;
+    background: #0f180c;
   }
   .hero-poster {
     position: absolute;
     inset: 0;
+    z-index: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center;
+    transition: opacity 0.6s ease;
   }
   .hero-video {
     position: absolute;
-    inset: 0;
-    overflow: hidden;
-    opacity: 0;
-    transition: opacity 0.8s ease;
-    pointer-events: none;
-  }
-  .hero-video.is-ready {
-    opacity: 1;
-  }
-  .hero-video :global(iframe) {
-    position: absolute;
     top: 50%;
     left: 50%;
+    z-index: 1;
     width: 100vw;
     height: 56.25vw; /* 16:9 */
     min-height: 100%;
     min-width: 177.78vh; /* 16:9 cover */
     border: 0;
-    transform: translate(-50%, -50%);
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.18);
+    transition: opacity 0.6s ease;
+  }
+  .hero.is-video-ready .hero-video {
+    opacity: 1;
+  }
+  .hero.is-video-ready .hero-poster {
+    opacity: 0;
   }
   .hero-scrim {
     position: absolute;
@@ -147,87 +154,58 @@ const vimeoSrc = hasVimeo
     .hero-video {
       display: none;
     }
+    .hero.is-video-ready .hero-poster {
+      opacity: 1;
+    }
   }
 </style>
 
 <script>
   const hero = document.getElementById('inicio');
-  const mount = hero?.querySelector('.hero-video');
+  const iframe = hero?.querySelector('iframe.hero-video');
 
-  if (hero instanceof HTMLElement && mount instanceof HTMLElement) {
+  if (hero instanceof HTMLElement && iframe instanceof HTMLIFrameElement) {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const src = mount.dataset.vimeoSrc;
+    const originalSrc = iframe.getAttribute('src') || '';
 
-    if (src && !reduceMotion.matches) {
-      /** @type {HTMLIFrameElement | null} */
-      let iframe = null;
-      let ready = false;
+    const post = (/** @type {'play' | 'pause'} */ method) => {
+      iframe.contentWindow?.postMessage(JSON.stringify({ method }), 'https://player.vimeo.com');
+    };
 
-      const post = (/** @type {'play' | 'pause'} */ method) => {
-        iframe?.contentWindow?.postMessage(JSON.stringify({ method }), 'https://player.vimeo.com');
-      };
+    const reveal = () => {
+      hero.classList.add('is-video-ready');
+    };
 
-      const loadPlayer = () => {
-        if (iframe) return;
-
-        iframe = document.createElement('iframe');
-        iframe.src = src;
-        iframe.title = mount.dataset.vimeoTitle || 'Video de fondo';
-        iframe.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture');
-        iframe.setAttribute('allowfullscreen', '');
-        iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
-        iframe.tabIndex = -1;
-        mount.appendChild(iframe);
-
-        const reveal = () => {
-          if (ready) return;
-          ready = true;
-          mount.classList.add('is-ready');
-        };
-
-        const onMessage = (/** @type {MessageEvent} */ event) => {
-          if (event.origin !== 'https://player.vimeo.com') return;
-          let data = null;
-          try {
-            data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
-          } catch {
-            return;
+    if (reduceMotion.matches) {
+      iframe.removeAttribute('src');
+    } else {
+      const onMessage = (/** @type {MessageEvent} */ event) => {
+        if (event.origin !== 'https://player.vimeo.com') return;
+        let data = null;
+        try {
+          data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+        } catch {
+          return;
+        }
+        if (data?.event === 'ready') {
+          for (const value of ['play', 'playing', 'timeupdate']) {
+            iframe.contentWindow?.postMessage(
+              JSON.stringify({ method: 'addEventListener', value }),
+              'https://player.vimeo.com'
+            );
           }
-          if (data?.event === 'ready') {
-            for (const value of ['play', 'playing', 'timeupdate']) {
-              iframe?.contentWindow?.postMessage(
-                JSON.stringify({ method: 'addEventListener', value }),
-                'https://player.vimeo.com'
-              );
-            }
-          }
-          if (data?.event === 'play' || data?.event === 'playing' || data?.event === 'timeupdate') {
-            reveal();
-            window.removeEventListener('message', onMessage);
-          }
-        };
-        window.addEventListener('message', onMessage);
-        window.setTimeout(reveal, 2500);
-      };
-
-      const scheduleLoad = () => {
-        if ('requestIdleCallback' in window) {
-          window.requestIdleCallback(loadPlayer, { timeout: 1800 });
-        } else {
-          window.setTimeout(loadPlayer, 400);
+          post('play');
+        }
+        if (data?.event === 'play' || data?.event === 'playing' || data?.event === 'timeupdate') {
+          reveal();
+          window.removeEventListener('message', onMessage);
         }
       };
-
-      // Tras el load: el poster sigue siendo el candidato LCP.
-      if (document.readyState === 'complete') {
-        scheduleLoad();
-      } else {
-        window.addEventListener('load', scheduleLoad, { once: true });
-      }
+      window.addEventListener('message', onMessage);
+      window.setTimeout(reveal, 1800);
 
       const io = new IntersectionObserver(
         ([entry]) => {
-          if (!iframe) return;
           if (entry.isIntersecting) post('play');
           else post('pause');
         },
@@ -238,12 +216,10 @@ const vimeoSrc = hasVimeo
       reduceMotion.addEventListener('change', (event) => {
         if (event.matches) {
           post('pause');
-          mount.classList.remove('is-ready');
-          iframe?.remove();
-          iframe = null;
-          ready = false;
+          hero.classList.remove('is-video-ready');
+          iframe.removeAttribute('src');
         } else {
-          scheduleLoad();
+          iframe.src = originalSrc;
         }
       });
     }
