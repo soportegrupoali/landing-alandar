@@ -1,7 +1,7 @@
 // Contenido central de la landing de Alandar Paseo Residencial.
-// El copy y los datos "editables" viven en src/content/site.yaml (gestionado
-// desde /admin vía Decap CMS). Aquí solo se tipa y se re-exporta para que los
-// componentes .astro tengan autocompletado y no dependan de la forma del YAML.
+// El copy y los datos editables viven en src/content/site.yaml.
+// Aquí solo se tipa y se re-exporta para que los componentes .astro tengan
+// autocompletado y no dependan de la forma del YAML.
 
 import { parse } from 'yaml';
 import rawYaml from '../content/site.yaml?raw';

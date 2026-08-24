@@ -1,5 +1,5 @@
 # Contenido editable de la landing de Alandar.
-# Este archivo se edita desde el panel /admin (Decap CMS) o directamente aquí.
+# Editar este archivo directamente (textos, stats, video, etc.).
 # Los campos "id" de las listas (amenities, masterPlanPins, etc.) no deben
 # borrarse ni cambiarse: conectan cada texto con su imagen/ícono correspondiente.
 
